@@ -12,7 +12,7 @@
     $editor-background: #fff;
     $editor-color: #000;
 
-    $line-height: 1.2;
+    $line-height: 1.5;
     $line-margin: 10px;
     $line-padding: 5px;
 
@@ -324,6 +324,7 @@
         @extend %monospace;
         background-color: $editor-background;
         background-color: rgba($editor-background, 0.7);
+        line-height: 1.2;
     }
 
     div.HyperMD-hr-bg {

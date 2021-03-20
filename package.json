@@ -2,21 +2,64 @@
   "name": "devnote",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "src/electron.js",
   "keywords": [],
-  "author": "",
+  "author": "Ramón Otero <kaptux@gmail.com>",
   "license": "ISC",
   "scripts": {
-    "clean": "rm dist/bundle.js",
-    "start": "parcel src/index.html",
-    "build-prod": "parcel build src/index.html"
+    "web-start": "parcel -p 3030 index.html --out-dir build",
+    "web-build": "parcel build index.html --out-dir build --public-url ./",
+    "electron-build": "electron-builder -mwl",
+    "clean-build": "rm -rf build/ .cache dist/",
+    "build": "yarn clean-build && yarn web-build && yarn electron-build",
+    "start": "concurrently \"nocross-env BROWSER=none yarn web-start\" \"wait-on http://localhost:3030 && electron . \"",
+    "test-bundle": "bundlesize"
   },
+  "bundlesize": [
+    {
+      "path": "./build/src.*.js",
+      "maxSize": "250 kB"
+    },
+    {
+      "path": "./build/src.*.css",
+      "maxSize": "100 kB"
+    }
+  ],
   "dependencies": {
-    "codemirror": "^5.59.4"
+    "codemirror": "^5.59.4",
+    "electron-is-dev": "^2.0.0"
   },
+  "build": {
+    "appId": "com.devnote",
+    "files": [
+      "src/electron.js",
+      "src/assets/*",
+      "build/**/*"
+    ],
+    "mac": {
+      "target": "dmg",
+      "icon": "src/assets/logo.png"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "src/assets/logo.png"
+    },
+    "linux": {
+      "target": "deb",
+      "icon": "src/assets/logo.png",
+      "category": "Development"
+    }
+  },
+  "homepage": "./",
   "devDependencies": {
-    "parcel-bundler": "1.12.3",
+    "concurrently": "^6.0.0",
+    "cross-env": "^7.0.3",
+    "electron": "^12.0.1",
+    "electron-builder": "^22.10.5",
+    "parcel-bundler": "^1.12.5",
     "prettier": "^2.2.1",
-    "typescript": "^4.2.3"
+    "sass": "^1.32.8",
+    "typescript": "^4.2.3",
+    "wait-on": "^5.3.0"
   }
 }

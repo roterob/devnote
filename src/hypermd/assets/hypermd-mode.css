@@ -1,10 +1,14 @@
-@charset "UTF-8";
-.CodeMirror .hmd-fold-math, .CodeMirror pre.HyperMD-table-row .cm-hmd-table-sep {
+.CodeMirror .hmd-fold-math,
+.CodeMirror pre.HyperMD-table-row .cm-hmd-table-sep {
   display: inline-block;
   vertical-align: middle;
 }
 
-.CodeMirror span.hmd-hidden-token.cm-formatting-em, .CodeMirror span.hmd-hidden-token.cm-formatting-strong, .CodeMirror span.hmd-hidden-token.cm-formatting-strikethrough, .CodeMirror span.hmd-hidden-token.cm-formatting-code, .CodeMirror span.hmd-hidden-token.cm-formatting-link {
+.CodeMirror span.hmd-hidden-token.cm-formatting-em,
+.CodeMirror span.hmd-hidden-token.cm-formatting-strong,
+.CodeMirror span.hmd-hidden-token.cm-formatting-strikethrough,
+.CodeMirror span.hmd-hidden-token.cm-formatting-code,
+.CodeMirror span.hmd-hidden-token.cm-formatting-link {
   display: inline;
   font-size: 1px !important;
   letter-spacing: -1ch;
@@ -44,9 +48,9 @@
   cursor: pointer;
 }
 .CodeMirror .hmd-link-icon:after {
-  content: "🔗»";
+  content: '🔗»';
   color: #009;
-  text-shadow: 0 0 2px #69F;
+  text-shadow: 0 0 2px #69f;
 }
 .CodeMirror pre.HyperMD-table-row {
   white-space: pre;

@@ -1,65 +1,92 @@
 {
   "name": "devnote",
+  "productName": "devnote",
   "version": "1.0.0",
-  "description": "",
-  "main": "src/electron.js",
-  "keywords": [],
-  "author": "Ramón Otero <kaptux@gmail.com>",
-  "license": "ISC",
+  "description": "Note app for (vim) developers",
+  "main": ".webpack/main",
   "scripts": {
-    "web-start": "parcel -p 3030 index.html --out-dir build",
-    "web-build": "parcel build index.html --out-dir build --public-url ./",
-    "electron-build": "electron-builder -mwl",
-    "clean-build": "rm -rf build/ .cache dist/",
-    "build": "yarn clean-build && yarn web-build && yarn electron-build",
-    "start": "concurrently \"nocross-env BROWSER=none yarn web-start\" \"wait-on http://localhost:3030 && electron . \"",
-    "test-bundle": "bundlesize"
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts ."
   },
-  "bundlesize": [
-    {
-      "path": "./build/src.*.js",
-      "maxSize": "250 kB"
-    },
-    {
-      "path": "./build/src.*.css",
-      "maxSize": "100 kB"
+  "keywords": [],
+  "author": {
+    "name": "Ramón Otero",
+    "email": "kaptux@gmail.com"
+  },
+  "license": "MIT",
+  "config": {
+    "forge": {
+      "packagerConfig": {},
+      "makers": [
+        {
+          "name": "@electron-forge/maker-squirrel",
+          "config": {
+            "name": "devnote_electron"
+          }
+        },
+        {
+          "name": "@electron-forge/maker-zip",
+          "platforms": [
+            "darwin"
+          ]
+        },
+        {
+          "name": "@electron-forge/maker-deb",
+          "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-rpm",
+          "config": {}
+        }
+      ],
+      "plugins": [
+        [
+          "@electron-forge/plugin-webpack",
+          {
+            "mainConfig": "./webpack.main.config.js",
+            "renderer": {
+              "config": "./webpack.renderer.config.js",
+              "entryPoints": [
+                {
+                  "html": "./src/index.html",
+                  "js": "./src/renderer.js",
+                  "name": "main_window"
+                }
+              ]
+            }
+          }
+        ]
+      ]
     }
-  ],
-  "dependencies": {
-    "codemirror": "^5.59.4",
-    "electron-is-dev": "^2.0.0"
   },
-  "build": {
-    "appId": "com.devnote",
-    "files": [
-      "src/electron.js",
-      "src/assets/*",
-      "build/**/*"
-    ],
-    "mac": {
-      "target": "dmg",
-      "icon": "src/assets/logo.png"
-    },
-    "win": {
-      "target": "nsis",
-      "icon": "src/assets/logo.png"
-    },
-    "linux": {
-      "target": "deb",
-      "icon": "src/assets/logo.png",
-      "category": "Development"
-    }
-  },
-  "homepage": "./",
   "devDependencies": {
-    "concurrently": "^6.0.0",
-    "cross-env": "^7.0.3",
-    "electron": "^12.0.1",
-    "electron-builder": "^22.10.5",
-    "parcel-bundler": "^1.12.5",
-    "prettier": "^2.2.1",
+    "@electron-forge/cli": "^6.0.0-beta.54",
+    "@electron-forge/maker-deb": "^6.0.0-beta.54",
+    "@electron-forge/maker-rpm": "^6.0.0-beta.54",
+    "@electron-forge/maker-squirrel": "^6.0.0-beta.54",
+    "@electron-forge/maker-zip": "^6.0.0-beta.54",
+    "@electron-forge/plugin-webpack": "6.0.0-beta.54",
+    "@marshallofsound/webpack-asset-relocator-loader": "^0.5.0",
+    "@typescript-eslint/eslint-plugin": "^4.0.1",
+    "@typescript-eslint/parser": "^4.0.1",
+    "css-loader": "^4.2.1",
+    "electron": "12.0.1",
+    "eslint": "^7.6.0",
+    "eslint-plugin-import": "^2.20.0",
+    "file-loader": "^6.2.0",
+    "fork-ts-checker-webpack-plugin": "^5.0.14",
+    "node-loader": "^1.0.1",
     "sass": "^1.32.8",
-    "typescript": "^4.2.3",
-    "wait-on": "^5.3.0"
+    "sass-loader": "^10.1.1",
+    "style-loader": "^1.2.1",
+    "ts-loader": "^8.0.2",
+    "typescript": "^4.0.2"
+  },
+  "dependencies": {
+    "codemirror": "^5.60.0",
+    "electron-squirrel-startup": "^1.0.0"
   }
 }

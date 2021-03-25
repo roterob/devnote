@@ -1,24 +1,25 @@
-import * as fs from 'fs';
-import debounce from 'lodash.debounce';
-import CodeMirror from 'codemirror/lib/codemirror';
-import './codemirror/markdown';
-import './codemirror/vim';
-import * as HyperMD from './hypermd';
+import * as fs from "fs";
+import debounce from "lodash.debounce";
+import CodeMirror from "codemirror/lib/codemirror";
+import APP from "./app";
+import "./codemirror/markdown";
+import "./codemirror/vim";
+import * as HyperMD from "./hypermd";
 
-import './index.css';
-import './hypermd/assets/hypermd-mode.css';
-import './hypermd/assets/hypermd.scss';
+import "./index.css";
+import "./hypermd/assets/hypermd-mode.css";
+import "./hypermd/assets/hypermd.scss";
 
-const myTextarea = document.getElementById('demo');
+const myTextarea = document.getElementById("demo");
 
 const editor = HyperMD.fromTextArea(myTextarea, {
-  keyMap: 'vim',
+  keyMap: "vim",
   lineNumbers: false,
   foldGutter: false,
   // extraKeys: "hyperm
   viewportMargin: Infinity,
   mode: {
-    name: 'hypermd',
+    name: "hypermd",
     hashtag: true, // this syntax is not actived by default
   },
   // hmdClick: clickHandler,
@@ -31,39 +32,40 @@ const editor = HyperMD.fromTextArea(myTextarea, {
   },
 });
 
-editor.setSize(null, '100%'); // set height
-editor.on('vim-mode-change', ({ mode }) => {
-  console.log('-->', mode);
-  if (mode == 'insert') {
+editor.setOption("hmdReadLink", { baseURI: "./" }); // for images and links in Markdown
+editor.setSize(null, "100%"); // set height
+editor.on("vim-mode-change", ({ mode }) => {
+  console.log("-->", mode);
+  if (mode == "insert") {
     setTimeout(() => {
-      editor.setOption('keyMap', 'hypermd');
+      editor.setOption("keyMap", "hypermd");
     }, 0);
   }
 });
-editor.on('keyHandled', (cm, name) => {
-  if (name === 'Esc') {
-    console.log(cm.getOption('keyMap'));
-    editor.setOption('keyMap', 'vim');
+editor.on("keyHandled", (cm, name) => {
+  if (name === "Esc") {
+    console.log(cm.getOption("keyMap"));
+    editor.setOption("keyMap", "vim");
   }
 });
 
-const file = "C:\\Users\\Moncho\\Desktop\\docs\\notepad.md";
-const writeFile = debounce(data => {
-  fs.writeFileSync(file, data);
-  console.log("file saved!");
-}, 1000);
-const text = fs.readFileSync(
-  file,
-  { encoding: "utf-8" }
-);
-editor.setValue(text);
+// const file = "C:\\Users\\Moncho\\Desktop\\docs\\notepad.md";
+// const writeFile = debounce((data) => {
+//   fs.writeFileSync(file, data);
+//   console.log("file saved!");
+// }, 1000);
+// const text = fs.readFileSync(file, { encoding: "utf-8" });
+// editor.setValue(text);
 
 editor.on("change", () => {
   writeFile(editor.getValue());
 });
+
+APP.init(editor);
 
 // for debugging
 window.CodeMirror = CodeMirror;
 window.HyperMD = HyperMD;
 window.editor = editor;
 window.cm = editor;
+window.APP = APP;

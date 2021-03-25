@@ -1,6 +1,6 @@
+/* global APP */
 // CodeMirror, copyright (c) by Marijn Haverbeke and others
 // Distributed under an MIT license: https://codemirror.net/LICENSE
-
 /**
  * Supported keybindings:
  *   Too many to list. Refer to defaultKeymap below.
@@ -893,6 +893,8 @@
     { name: "undo", shortName: "u" },
     { name: "redo", shortName: "red" },
     { name: "set", shortName: "se" },
+    { name: "pwd" },
+    { name: "edit", shortName: "e" },
     { name: "setlocal", shortName: "setl" },
     { name: "setglobal", shortName: "setg" },
     { name: "sort", shortName: "sor" },
@@ -6169,6 +6171,18 @@
           if (setOptionReturn instanceof Error) {
             showError(cm, setOptionReturn.message);
           }
+        }
+      },
+      pwd: function (cm, params) {
+        showConfirm(cm, APP.pwdCommand());
+      },
+      edit: function (cm, params) {
+        if (!params.args || params.args.length < 1) {
+          showError(cm, "No file name");
+        } else {
+          APP.openCommand(params.args[0]).catch((e) => {
+            showError(cm, e);
+          });
         }
       },
       setlocal: function (cm, params) {

@@ -267,6 +267,11 @@
     @extend %monospace;
   }
 
+  /// Emojis
+  span.hmd-emoji {
+      vertical-align: text-bottom;
+  }
+
   /// Headers
   // in fact stdheader has no special meaning; they are just normal headers
   // legacy naming problem
@@ -580,6 +585,9 @@
   }
 
   /// math blocks
+  img.hmd-math-dump {
+      vertical-align: bottom;
+  }
 
   span.hmd-fold-math-placeholder {
     // when math is not fully rendered. a placeholder with raw Tex expression is presented

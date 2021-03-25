@@ -1,3 +1,5 @@
+import * as fs from 'fs';
+import debounce from 'lodash.debounce';
 import CodeMirror from 'codemirror/lib/codemirror';
 import './codemirror/markdown';
 import './codemirror/vim';
@@ -43,6 +45,21 @@ editor.on('keyHandled', (cm, name) => {
     console.log(cm.getOption('keyMap'));
     editor.setOption('keyMap', 'vim');
   }
+});
+
+const file = "C:\\Users\\Moncho\\Desktop\\docs\\notepad.md";
+const writeFile = debounce(data => {
+  fs.writeFileSync(file, data);
+  console.log("file saved!");
+}, 1000);
+const text = fs.readFileSync(
+  file,
+  { encoding: "utf-8" }
+);
+editor.setValue(text);
+
+editor.on("change", () => {
+  writeFile(editor.getValue());
 });
 
 // for debugging

@@ -87,6 +87,7 @@
   },
   "dependencies": {
     "codemirror": "^5.60.0",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "lodash.debounce": "^4.0.8"
   }
 }

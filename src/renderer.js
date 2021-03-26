@@ -49,18 +49,6 @@ editor.on("keyHandled", (cm, name) => {
   }
 });
 
-// const file = "C:\\Users\\Moncho\\Desktop\\docs\\notepad.md";
-// const writeFile = debounce((data) => {
-//   fs.writeFileSync(file, data);
-//   console.log("file saved!");
-// }, 1000);
-// const text = fs.readFileSync(file, { encoding: "utf-8" });
-// editor.setValue(text);
-
-editor.on("change", () => {
-  writeFile(editor.getValue());
-});
-
 APP.init(editor);
 
 // for debugging

@@ -894,6 +894,8 @@
     { name: "redo", shortName: "red" },
     { name: "set", shortName: "se" },
     { name: "pwd" },
+    { name: "echo" },
+    { name: "cwd" },
     { name: "edit", shortName: "e" },
     { name: "setlocal", shortName: "setl" },
     { name: "setglobal", shortName: "setg" },
@@ -6173,8 +6175,16 @@
           }
         }
       },
+      echo: function (cm, params) {
+        showConfirm(cm, APP.echoCommand(params.args && params.args[0]));
+      },
       pwd: function (cm, params) {
         showConfirm(cm, APP.pwdCommand());
+      },
+      cwd: function (cm, params) {
+        APP.cwdCommand(params.args && params.args[0])
+          .then((newPwd) => showConfirm(cm, newPwd))
+          .catch((e) => showError(cm, e));
       },
       edit: function (cm, params) {
         if (!params.args || params.args.length < 1) {

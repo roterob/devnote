@@ -1,9 +1,10 @@
-function document(md, initMsCounter = 0) {
+function document(md, parent) {
   const MAX_LINES_TO_SHOW = 1000;
-  let msCounter = initMsCounter; // used for generate section unique ids.
-  const document = {};
-  const currentSections = [];
-  const tagIndex = {};
+  const document = parent ? parent.getDocument() : {};
+  const tagIndex = parent ? parent.getTagIndex() : {};
+  let msCounter = parent ? parent.getMsCounter() : 0; // used for generate section unique ids.
+  let filteredDocument = {};
+  let me = null;
 
   function addTagIndex(tag, sectionId) {
     const list = tagIndex[tag] || [];
@@ -11,19 +12,12 @@ function document(md, initMsCounter = 0) {
     tagIndex[tag] = list;
   }
 
-  function mergeTagIndex(newTagIndex) {
-    Object.keys(newTagIndex).forEach(tag => {
-      tagIndex[tag] = tagIndex[tag] || [];
-      Array.prototype.push.apply(tagIndex[tag], newTagIndex[tag]);
-    })
-  }
-
   function buildDocument(md) {
-    const TAG_RE = /#([\w-_0-9\/])*\b/g;
+    const TAG_RE = /#([\w-_0-9\/]*)\b/g;
     const DATE_RE = /#(\d{2})\/(\d{2})\/(\d{4})/;
     const lines = md.split(/\r?\n/);
     let blockLines = [];
-    let tags = new Set();
+    let tags = [];
     let dateMS = null;
 
     function addSection() {
@@ -36,7 +30,7 @@ function document(md, initMsCounter = 0) {
           nol: blockLines.length,
         };
         for (const tag of tags) {
-          addTagIndex(tag, msCounter);
+          addTagIndex(tag, dateMS);
         }
       }
     }
@@ -52,17 +46,20 @@ function document(md, initMsCounter = 0) {
       return [ms, exists];
     }
 
-    for (const line of lines) {
+    for (let line of lines) {
       if (line.startsWith("--- #")) {
         addSection();
-        blockLines = [line];
-        tags = new Set([...line.matchAll(TAG_RE)].map((g) => g[1]));
+        tags = [...line.matchAll(TAG_RE)].map((m) => m[1]);
         msCounter += 1;
+        const [ms, tagFound] = getSectionDateInMS(line);
         // to keep seccion order and uniqueness
-        [dateMS, tagFound] = getSectionDateInMS(line) + msCounter;
+        dateMS = ms + msCounter;
         if (!tagFound) {
-          tags.add(new Date(dateMS).toLocaleDateString())
+          const dateString = new Date(dateMS).toLocaleDateString();
+          tags.push(dateString);
+          line += ` #${dateString}`;
         }
+        blockLines = [line];
       } else {
         blockLines.push(line);
       }
@@ -70,44 +67,70 @@ function document(md, initMsCounter = 0) {
     addSection();
   }
 
-  function filter() {
-    currentSections = [];
-    let numOfLines = 0;
-    let current = msCounter;
-    const blocks = [];
-    while (current > 0 && numOfLines < MAX_LINES_TO_SHOW) {
-      const section = document[current];
-      numOfLines += section.nol;
-      blocks.unshift(section.md);
-      current -= 1;
-      currentSections.push(current);
+  function applyFilters(tags, from) {
+    let sections = [];
+
+    if (!tags || tags.length == 0) {
+      sections = Object.keys(document);
+    } else {
+      tags.forEach((tag) => {
+        const index = tagIndex[tag];
+        if (index) {
+          Array.prototype.push.apply(sections, index);
+        }
+      });
     }
-    return blocks.join("\n");
+
+    sections.sort();
+    if (from) {
+      const fromIndex = sections.findIndex((t) => t >= from);
+      sections = fromIndex >= 0 ? sections.slice(fromIndex) : [];
+    }
+
+    return sections;
+  }
+
+  function filter(tags, from) {
+    const sections = applyFilters(tags, from);
+    filteredDocument = {};
+    const mdContent = [];
+
+    sections.forEach((sectionId) => {
+      const section = document[sectionId];
+      filteredDocument[sectionId] = section;
+      mdContent.push(section.md);
+    });
+
+    return mdContent.join("\n");
   }
 
   function removeFilteredSections() {
-    currentSections.forEach(section => {
-      section.tags.forEach(tag => {
-        tagIndex[tag] = tagIndex[tag].filter(t => t !== tag);
+    Object.values(filteredDocument).forEach((section) => {
+      section.tags.forEach((tag) => {
+        tagIndex[tag] = tagIndex[tag].filter((t) => t !== tag);
       });
       delete document[section.id];
     });
+    filteredDocument = {};
   }
 
   function updateCurrentSections(md) {
     removeFilteredSections();
-    const subDocument = document(md, msCounter);
-    const sections = Object.values(subDocument.getDocument());
-    currentSections = [...sections];
-    mergeTagIndex(subDocument.getTagIndex());
+    document(md, me);
   }
 
-  return {
+  buildDocument(md);
+
+  me = {
     getDocument: () => document,
     getTagIndex: () => tagIndex,
+    getFilteredSections: () => filteredDocument,
+    getMsCounter: () => msCounter,
     filter,
-    updateCurrentSections
-  }
+    updateCurrentSections,
+  };
+
+  return me;
 }
 
 export default document;

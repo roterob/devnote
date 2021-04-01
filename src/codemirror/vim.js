@@ -896,6 +896,8 @@
     { name: "pwd" },
     { name: "echo" },
     { name: "cwd" },
+    { name: "filter", shortName: "f" },
+    { name: "from" },
     { name: "edit", shortName: "e" },
     { name: "setlocal", shortName: "setl" },
     { name: "setglobal", shortName: "setg" },
@@ -6194,6 +6196,12 @@
             showError(cm, e);
           });
         }
+      },
+      filter: function (cm, params) {
+        showConfirm(cm, APP.filterCommand(params.args));
+      },
+      from: function (cm, params) {
+        showConfirm(cm, APP.fromCommand(params.args));
       },
       setlocal: function (cm, params) {
         // setCfg is passed through to setOption

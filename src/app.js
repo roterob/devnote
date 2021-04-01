@@ -1,24 +1,17 @@
 import { remote } from "electron";
 import { promises as fs, existsSync } from "fs";
 import * as path from "path";
+import * as chrono from "chrono-node";
 import debounce from "lodash.debounce";
+
+import document from "./document";
 
 const { app } = remote;
 
 const APP = (function () {
   let state = {};
   let editor = null;
-
-
-
-  async function loadDocument(url) {
-    //1) Loading the document
-    const txt = await fetch(url).then((r) => r.text());
-    //2) Parsing the documment
-    buildDocument(txt);
-    //3) Show default sections
-    return filterDocument();
-  }
+  let mdDocument = null;
 
   const writeFile = debounce((data) => {
     fs.writeFileSync(file, data);
@@ -34,12 +27,14 @@ const APP = (function () {
       openCommand(state.lastFile);
     }
 
-    cm.on("change", (cm, value) => {
-
-    });
+    cm.on("change", (cm, value) => {});
   }
 
   function setState(key, value) {
+    if (typeof value == "undefined") {
+      return;
+    }
+
     const newState = { ...state, ...{ [key]: value } };
     state = newState;
     localStorage.setItem("dn-state", JSON.stringify(state));
@@ -84,17 +79,58 @@ const APP = (function () {
       fileToOpen = path.join(state.pwd, filePath);
     }
     const txt = await fs.readFile(fileToOpen);
-    editor.setValue(txt.toString());
     setState("lastFile", fileToOpen);
+    mdDocument = document(txt.toString());
+    editor.setValue(mdDocument.filter());
   }
 
-  async function writeCommand(filePath) {
-
+  function getDateTime(cliArgs) {
+    let res = null;
+    if (cliArgs && cliArgs.length > 0) {
+      const date = chrono.parseDate(cliArgs.join(" "));
+      if (date) {
+        res = new Date(
+          date.getFullYear(),
+          date.getMonth(),
+          date.getDate()
+        ).getTime();
+      }
+    }
+    return res;
   }
 
-  function loadCommand() {}
+  function getFilterTags(cliArgs) {
+    if (!cliArgs || cliArgs.length == 0) {
+      return [];
+    }
+    const tags = [];
+    for (let i = 0; i < cliArgs.length; i++) {
+      const tag = cliArgs[i];
+      if (tag == "--from") {
+        return [tags, getDateTime(cliArgs.slice(i + 1))];
+      } else {
+        tags.push(tag);
+      }
+    }
+    return [tags];
+  }
+
+  function filterCommand(cliArgs) {
+    const [tags, from] = getFilterTags(cliArgs);
+    editor.setValue(mdDocument.filter(tags, from));
+    setState("tags", tags || null);
+    setState("from", from);
+  }
+
+  function fromCommand(cliArgs) {
+    const from = getDateTime(cliArgs);
+    const tags = state.tags || [];
+    editor.setValue(mdDocument.filter(tags, from));
+    setState("from", from || null);
+  }
+
+  async function writeCommand(filePath) {}
   function insertCommand() {}
-  function tagCommand(tags, from, to) {}
   function tocCommand() {}
   function saveCommnad() {}
   function printCommand(tags) {}
@@ -105,6 +141,8 @@ const APP = (function () {
     cwdCommand,
     openCommand,
     echoCommand,
+    filterCommand,
+    fromCommand,
   };
 })();
 

@@ -1,9 +1,7 @@
-function document(md, parent) {
-  const MAX_LINES_TO_SHOW = 1000;
-  const document = parent ? parent.getDocument() : {};
-  const tagIndex = parent ? parent.getTagIndex() : {};
-  let msCounter = parent ? parent.getMsCounter() : 0; // used for generate section unique ids.
-  let filteredDocument = {};
+import { getDateTime } from "./utils";
+
+function mdDocument(md, parent) {
+  let document, tagIndex, msCounter, filteredDocument;
   let me = null;
 
   function addTagIndex(tag, sectionId) {
@@ -13,8 +11,13 @@ function document(md, parent) {
   }
 
   function buildDocument(md) {
+    document = parent ? parent.getDocument() : {};
+    tagIndex = parent ? parent.getTagIndex() : {};
+    msCounter = parent ? parent.getMsCounter() : 0; // used for generate section unique ids.
+    filteredDocument = {};
+
     const TAG_RE = /#([\w-_0-9\/]*)\b/g;
-    const DATE_RE = /#(\d{2})\/(\d{2})\/(\d{4})/;
+    const DATE_RE = /#(\d{1,2})\/(\d{1,2})\/(\d{4})/;
     const lines = md.split(/\r?\n/);
     let blockLines = [];
     let tags = [];
@@ -36,12 +39,12 @@ function document(md, parent) {
     }
 
     function getSectionDateInMS(sectionLine) {
-      let ms = Date.now();
-      let exists = false;
-      const m = sectionLine.match(DATE_RE);
-      if (m) {
-        ms = Date.parse(`${m[2]}-${m[1]}-${m[3]}`);
-        exists = true;
+      let ms = getDateTime(sectionLine, DATE_RE);
+      let exists = true;
+
+      if (!ms) {
+        exists = false;
+        ms = Date.now();
       }
       return [ms, exists];
     }
@@ -115,8 +118,26 @@ function document(md, parent) {
   }
 
   function updateCurrentSections(md) {
-    removeFilteredSections();
-    document(md, me);
+    const filteredSections = Object.keys(filteredDocument).length;
+    if (
+      filteredSections == 0 ||
+      filteredSections == Object.keys(document).length
+    ) {
+      buildDocument(md);
+    } else {
+      removeFilteredSections();
+      mdDocument(md, me);
+    }
+  }
+
+  function toString() {
+    const sections = Object.keys(document);
+    sections.sort();
+    const mdContent = [];
+    sections.forEach((sectionId) => {
+      mdContent.push(document[sectionId].md);
+    });
+    return mdContent.join("\n");
   }
 
   buildDocument(md);
@@ -128,9 +149,10 @@ function document(md, parent) {
     getMsCounter: () => msCounter,
     filter,
     updateCurrentSections,
+    toString,
   };
 
   return me;
 }
 
-export default document;
+export default mdDocument;

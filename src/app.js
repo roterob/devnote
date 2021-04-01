@@ -1,10 +1,10 @@
 import { remote } from "electron";
 import { promises as fs, existsSync } from "fs";
 import * as path from "path";
-import * as chrono from "chrono-node";
 import debounce from "lodash.debounce";
 
 import document from "./document";
+import { getDateTime, getFilterTags, getHumanizedDateTime } from "./utils";
 
 const { app } = remote;
 
@@ -38,6 +38,11 @@ const APP = (function () {
     const newState = { ...state, ...{ [key]: value } };
     state = newState;
     localStorage.setItem("dn-state", JSON.stringify(state));
+  }
+
+  function saveCurrent() {
+    const md = editor.getValue();
+    mdDocument.updateCurrentSections(md);
   }
 
   function echoCommand(value) {
@@ -84,52 +89,37 @@ const APP = (function () {
     editor.setValue(mdDocument.filter());
   }
 
-  function getDateTime(cliArgs) {
-    let res = null;
-    if (cliArgs && cliArgs.length > 0) {
-      const date = chrono.parseDate(cliArgs.join(" "));
-      if (date) {
-        res = new Date(
-          date.getFullYear(),
-          date.getMonth(),
-          date.getDate()
-        ).getTime();
-      }
-    }
-    return res;
-  }
-
-  function getFilterTags(cliArgs) {
-    if (!cliArgs || cliArgs.length == 0) {
-      return [];
-    }
-    const tags = [];
-    for (let i = 0; i < cliArgs.length; i++) {
-      const tag = cliArgs[i];
-      if (tag == "--from") {
-        return [tags, getDateTime(cliArgs.slice(i + 1))];
-      } else {
-        tags.push(tag);
-      }
-    }
-    return [tags];
-  }
-
   function filterCommand(cliArgs) {
+    saveCurrent();
     const [tags, from] = getFilterTags(cliArgs);
-    editor.setValue(mdDocument.filter(tags, from));
+    editor.setValue(mdDocument.filter(tags, from || state.from));
     setState("tags", tags || null);
     setState("from", from);
   }
 
-  function fromCommand(cliArgs) {
-    const from = getDateTime(cliArgs);
+  function fromCommand(cliArgs = []) {
+    saveCurrent();
+    const args = cliArgs.join(" ");
+    const from = getDateTime(args) || getHumanizedDateTime(args);
     const tags = state.tags || [];
     editor.setValue(mdDocument.filter(tags, from));
     setState("from", from || null);
   }
 
-  async function writeCommand(filePath) {}
+  async function writeCommand(filePath) {
+    saveCurrent();
+    let fileToSave = filePath || state.lastFile;
+    if (!fileToSave) {
+      throw "No file path";
+    }
+
+    if (!path.isAbsolute(fileToSave)) {
+      fileToSave = path.join(state.pwd, fileToSave);
+    }
+    await fs.writeFile(fileToSave, mdDocument.toString());
+    setState("lastFile", fileToSave);
+    return `${fileToSave} saved!`;
+  }
   function insertCommand() {}
   function tocCommand() {}
   function saveCommnad() {}
@@ -143,6 +133,7 @@ const APP = (function () {
     echoCommand,
     filterCommand,
     fromCommand,
+    writeCommand,
   };
 })();
 

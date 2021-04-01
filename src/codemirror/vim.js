@@ -6203,6 +6203,11 @@
       from: function (cm, params) {
         showConfirm(cm, APP.fromCommand(params.args));
       },
+      write: function (cm, params) {
+        APP.writeCommand(params.args && params.args[0])
+          .then((res) => showConfirm(cm, res))
+          .catch((e) => showError(cm, e));
+      },
       setlocal: function (cm, params) {
         // setCfg is passed through to setOption
         params.setCfg = { scope: "local" };
@@ -6573,15 +6578,6 @@
       },
       redo: CodeMirror.commands.redo,
       undo: CodeMirror.commands.undo,
-      write: function (cm) {
-        if (CodeMirror.commands.save) {
-          // If a save command is defined, call it.
-          CodeMirror.commands.save(cm);
-        } else if (cm.save) {
-          // Saves to text area if no save command is defined and cm.save() is available.
-          cm.save();
-        }
-      },
       nohlsearch: function (cm) {
         clearSearchHighlight(cm);
       },

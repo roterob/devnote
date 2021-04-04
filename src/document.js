@@ -110,7 +110,9 @@ function mdDocument(md, parent) {
   function removeFilteredSections() {
     Object.values(filteredDocument).forEach((section) => {
       section.tags.forEach((tag) => {
-        tagIndex[tag] = tagIndex[tag].filter((t) => t !== tag);
+        tagIndex[tag] = tagIndex[tag].filter(
+          (sectionId) => sectionId !== section.id
+        );
       });
       delete document[section.id];
     });
@@ -119,10 +121,7 @@ function mdDocument(md, parent) {
 
   function updateCurrentSections(md) {
     const filteredSections = Object.keys(filteredDocument).length;
-    if (
-      filteredSections == 0 ||
-      filteredSections == Object.keys(document).length
-    ) {
+    if ( filteredSections == Object.keys(document).length) {
       buildDocument(md);
     } else {
       removeFilteredSections();
@@ -131,8 +130,7 @@ function mdDocument(md, parent) {
   }
 
   function toString() {
-    const sections = Object.keys(document);
-    sections.sort();
+    const sections = Object.keys(document).sort();
     const mdContent = [];
     sections.forEach((sectionId) => {
       mdContent.push(document[sectionId].md);

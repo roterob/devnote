@@ -32,7 +32,8 @@ export function getFilterTags(cliArgs) {
   for (let i = 0; i < cliArgs.length; i++) {
     const tag = cliArgs[i];
     if (tag == "--from") {
-      return [tags, getDateTime(cliArgs.slice(i + 1).join(" "))];
+      const dateArgs = cliArgs.slice(i + 1).join(" ");
+      return [tags, getDateTime(dateArgs) || getHumanizedDateTime(dateArgs)];
     } else {
       tags.push(tag);
     }

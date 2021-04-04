@@ -12,10 +12,15 @@ const APP = (function () {
   let state = {};
   let editor = null;
   let mdDocument = null;
+  let currentChanged = false;
 
   const writeFile = debounce((data) => {
     fs.writeFileSync(file, data);
   }, 1000);
+
+  const editorChangeHandler = (cm, changeObj) => {
+    currentChanged = true;
+  }
 
   function init(cm) {
     editor = cm;
@@ -27,7 +32,21 @@ const APP = (function () {
       openCommand(state.lastFile);
     }
 
-    cm.on("change", (cm, value) => {});
+    cm.on("change", editorChangeHandler);
+  }
+
+  function setEditorValue(value) {
+    editor.off("change", editorChangeHandler);
+    editor.setValue(value);
+    editor.on("change", editorChangeHandler);
+  }
+
+  function saveCurrent() {
+    if (currentChanged) {
+      const md = editor.getValue();
+      mdDocument.updateCurrentSections(md);
+      currentChanged = false;
+    }
   }
 
   function setState(key, value) {
@@ -38,11 +57,6 @@ const APP = (function () {
     const newState = { ...state, ...{ [key]: value } };
     state = newState;
     localStorage.setItem("dn-state", JSON.stringify(state));
-  }
-
-  function saveCurrent() {
-    const md = editor.getValue();
-    mdDocument.updateCurrentSections(md);
   }
 
   function echoCommand(value) {
@@ -86,13 +100,13 @@ const APP = (function () {
     const txt = await fs.readFile(fileToOpen);
     setState("lastFile", fileToOpen);
     mdDocument = document(txt.toString());
-    editor.setValue(mdDocument.filter());
+    setEditorValue(mdDocument.filter());
   }
 
   function filterCommand(cliArgs) {
     saveCurrent();
     const [tags, from] = getFilterTags(cliArgs);
-    editor.setValue(mdDocument.filter(tags, from || state.from));
+    setEditorValue(mdDocument.filter(tags, from || state.from));
     setState("tags", tags || null);
     setState("from", from);
   }
@@ -102,7 +116,7 @@ const APP = (function () {
     const args = cliArgs.join(" ");
     const from = getDateTime(args) || getHumanizedDateTime(args);
     const tags = state.tags || [];
-    editor.setValue(mdDocument.filter(tags, from));
+    setEditorValue(mdDocument.filter(tags, from));
     setState("from", from || null);
   }
 
@@ -122,7 +136,6 @@ const APP = (function () {
   }
   function insertCommand() {}
   function tocCommand() {}
-  function saveCommnad() {}
   function printCommand(tags) {}
 
   return {

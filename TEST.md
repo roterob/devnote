@@ -46,7 +46,7 @@ git reset --hard origin/feature/xxxxx
 - [ ] Preguntar por el soporte que nos da Figma.
 - [ ] Pararse a documentar un poco las funcionalidades del plugin.
 
---- #cheatsheet #docker
+--- #cheatsheet #docker #7/4/2021
 
 ```
 # ... port mapping
@@ -70,3 +70,14 @@ docker rmi <image_id>
 # Eliminar todo lo que no se esté usando
 docker system prune -a
 ```
+
+--- #activity #7/4/2021
+
+Esta línea sigue apareciendo muy lejos del límite superior de la sección a la que pertenece. De todos modos puede ser interesante ve como evoluciona esto.
+
+--- #howto #7/4/2021
+
+```
+const str = "cadena de texto";
+```
+

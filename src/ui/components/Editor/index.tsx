@@ -11,13 +11,13 @@ import * as HyperMD from "./lib/hypermd";
 import "./lib/hypermd/assets/hypermd-mode.css";
 import "./lib/hypermd/assets/hypermd.scss";
 
-const hyper = HyperMD as any;
+import  "./lib/hypermd/powerpack/insert-file-with-smms";
 
 function Editor() {
   const textAreaRef = useRef();
 
   useEffect(() => {
-    const editor = hyper.fromTextArea(textAreaRef.current, {
+    const editor = HyperMD.fromTextArea(textAreaRef.current, {
       keyMap: "vim",
       lineNumbers: false,
       foldGutter: false,

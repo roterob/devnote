@@ -1,11 +1,28 @@
-import { app, BrowserWindow } from "electron";
+import * as path from "path";
+import { createReadStream } from "fs";
+import { app, BrowserWindow, ipcMain, protocol, dialog } from "electron";
+import { FILE_PROTOCOL } from "./constants";
+
 declare const MAIN_WINDOW_WEBPACK_ENTRY: any;
+let appState: any = {};
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require("electron-squirrel-startup")) {
   // eslint-disable-line global-require
   app.quit();
 }
+
+const requestFileHandler = (request, callback) => {
+  const url = new URL(
+    "http://localhost/" + request.url.substr(FILE_PROTOCOL.length + 3)
+  );
+  const name = url.searchParams.get("name");
+  const extension = url.searchParams.get("ext");
+  const type = url.searchParams.get("type");
+
+  const pathToFile = path.join(appState.pwd, "files", url.pathname);
+  callback(createReadStream(pathToFile));
+};
 
 const createWindow = (): void => {
   // Create the browser window.
@@ -30,6 +47,9 @@ const createWindow = (): void => {
 
   // Hide menu
   mainWindow.setMenu(null);
+
+  // Register protocol
+  protocol.registerStreamProtocol(FILE_PROTOCOL, requestFileHandler);
 };
 
 // This method will be called when Electron has finished
@@ -54,5 +74,6 @@ app.on("activate", () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
+ipcMain.handle("devnote-update-state", (event, state) => {
+  appState = state;
+});

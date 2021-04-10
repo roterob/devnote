@@ -1,3 +1,5 @@
+declare const marked: any;
+
 // HyperMD, copyright (c) by laobubu
 // Distributed under an MIT license: http://laobubu.net/HyperMD/LICENSE
 //

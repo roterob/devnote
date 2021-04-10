@@ -1,23 +1,23 @@
-const rules = require('./webpack.rules');
-const plugins = require('./webpack.plugins');
+const rules = require("./webpack.rules");
+const plugins = require("./webpack.plugins");
 
 rules.push(
   {
     test: /\.css$/,
-    use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+    use: [{ loader: "style-loader" }, { loader: "css-loader" }],
   },
   {
     test: /\.s[ac]ss$/i,
-    use: ['style-loader', 'css-loader', 'sass-loader'],
+    use: ["style-loader", "css-loader", "sass-loader"],
   },
   {
-    test: /\.(png|jpe?g|gif)$/i,
+    test: /\.(woff(2)?|ttf|svg|png|jpe?g|gif)$/i,
     use: [
       {
-        loader: 'file-loader',
+        loader: "file-loader",
       },
     ],
-  },
+  }
 );
 
 module.exports = {
@@ -26,6 +26,6 @@ module.exports = {
   },
   plugins: plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.sass', '.scss'],
+    extensions: [".js", ".ts", ".jsx", ".tsx", ".css", ".sass", ".scss"],
   },
 };

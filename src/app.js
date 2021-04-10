@@ -1,10 +1,16 @@
-import { remote } from "electron";
-import { promises as fs, existsSync } from "fs";
+import { remote, protocol, ipcRenderer } from "electron";
+import { promises as fs, existsSync, createReadStream } from "fs";
 import * as path from "path";
 import debounce from "lodash.debounce";
 
 import document from "./document";
-import { getDateTime, getFilterTags, getHumanizedDateTime } from "./utils";
+import { FILE_PROTOCOL } from "./constants";
+import {
+  getDateTime,
+  getFilterTags,
+  getHumanizedDateTime,
+  objectId,
+} from "./utils";
 
 const { app } = remote;
 
@@ -20,11 +26,12 @@ const APP = (function () {
 
   const editorChangeHandler = (cm, changeObj) => {
     currentChanged = true;
-  }
+  };
 
   function init(cm) {
     editor = cm;
     state = JSON.parse(localStorage.getItem("dn-state") || "{}");
+    ipcRenderer.invoke("devnote-update-state", state);
     //defaults;
     state.pwd = state.pwd || app.getPath("home");
 
@@ -57,6 +64,7 @@ const APP = (function () {
     const newState = { ...state, ...{ [key]: value } };
     state = newState;
     localStorage.setItem("dn-state", JSON.stringify(state));
+    ipcRenderer.invoke("devnote-update-state", state);
   }
 
   function echoCommand(value) {
@@ -138,8 +146,25 @@ const APP = (function () {
   function tocCommand() {}
   function printCommand(tags) {}
 
+  async function uploadFile(file) {
+    const [name, extension] = file.name.split(".");
+    const idName = `${objectId()}.${extension}`;
+    const fileRepository = path.join(state.pwd, "files");
+    if (!existsSync(fileRepository)) {
+      await fs.mkdir(fileRepository, { recursive: true });
+    }
+
+    debugger;
+    const filePath = path.join(state.pwd, "files", idName);
+    const buffer = await file.arrayBuffer();
+    const data = new Uint8Array(buffer);
+    await fs.writeFile(filePath, data);
+    return `${FILE_PROTOCOL}://${idName}?name=${name}&ext=${extension}&type=${file.type}`;
+  }
+
   return {
     init,
+    uploadFile,
     pwdCommand,
     cwdCommand,
     openCommand,

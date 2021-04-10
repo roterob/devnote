@@ -1,4 +1,13 @@
-declare const window: any;
+declare global {
+  interface Window {
+    MyNamespace: any;
+    CodeMirror: any;
+    HyperMD: any;
+    editor: any;
+    cm: any;
+    APP: any;
+  }
+}
 
 import React, { useEffect, useRef } from "react";
 import CodeMirror from "codemirror/lib/codemirror";
@@ -11,7 +20,8 @@ import * as HyperMD from "./lib/hypermd";
 import "./lib/hypermd/assets/hypermd-mode.css";
 import "./lib/hypermd/assets/hypermd.scss";
 
-import  "./lib/hypermd/powerpack/insert-file-with-smms";
+import "./lib/hypermd/powerpack/fold-math-with-katex";
+import "./lib/hypermd/powerpack/insert-file-with-smms";
 
 function Editor() {
   const textAreaRef = useRef();

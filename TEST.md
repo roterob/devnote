@@ -81,3 +81,15 @@ Esta línea sigue apareciendo muy lejos del límite superior de la sección a la
 const str = "cadena de texto";
 ```
 
+--- #tip #9/4/2021
+
+### La transformada de Fourier
+El problema de esta transformada es que las matemáticas detrás de ella son bastante avanzadas. Solo hay que echar un vistazo a la expresión matemática para visualizar todo lo que hay detrás. La voy a poner aquí pero también adelanto que a lo largo de este artículo vermeos una explicación sencilla, tanto del concepto como de las matemáticas detrás de ella.
+
+$$
+f(x) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi
+$$
+
+![test.jpg](devnote://6070efb01e59ad35d556a7cf.jpg?name=test&ext=jpg&type=image/jpeg) 
+
+

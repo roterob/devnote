@@ -3,7 +3,7 @@ import * as ReactDOM from "react-dom";
 import { hot } from "react-hot-loader";
 import AppUI from "./ui";
 
-import './index.css';
+import "./index.scss";
 
 ReactDOM.render(<AppUI />, document.getElementById("editor_area"));
 

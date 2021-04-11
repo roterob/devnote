@@ -1,3 +1,14 @@
+import React from "react";
 import Editor from "./components/Editor";
+import MathPreview from "./components/MathPreview";
 
-export default Editor;
+function AppUI() {
+  return (
+    <>
+      <MathPreview />
+      <Editor />
+    </>
+  );
+}
+
+export default AppUI;

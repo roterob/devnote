@@ -154,7 +154,6 @@ const APP = (function () {
       await fs.mkdir(fileRepository, { recursive: true });
     }
 
-    debugger;
     const filePath = path.join(state.pwd, "files", idName);
     const buffer = await file.arrayBuffer();
     const data = new Uint8Array(buffer);

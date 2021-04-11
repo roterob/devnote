@@ -13,6 +13,7 @@ import React, { useEffect, useRef } from "react";
 import CodeMirror from "codemirror/lib/codemirror";
 
 import APP from "../../../app";
+import useAppStore from "../../../app-store";
 
 import "./lib/codemirror/markdown";
 import "./lib/codemirror/vim";
@@ -24,10 +25,11 @@ import "./lib/hypermd/powerpack/fold-math-with-katex";
 import "./lib/hypermd/powerpack/insert-file-with-smms";
 
 function Editor() {
+  const setMathPreview = useAppStore((store) => store.setMathPreview);
   const textAreaRef = useRef();
 
   useEffect(() => {
-    const editor = HyperMD.fromTextArea(textAreaRef.current, {
+    const cmeditor = HyperMD.fromTextArea(textAreaRef.current, {
       keyMap: "vim",
       lineNumbers: false,
       foldGutter: false,
@@ -44,32 +46,34 @@ function Editor() {
         html: true, // maybe dangerous
         emoji: true,
       },
+      hmdFoldMath: {
+        onPreview: (exp) => setMathPreview({ cm: cmeditor, exp }),
+        onPreviewEnd: () => setMathPreview({ cm: cmeditor, exp: null }),
+      },
     });
 
-    editor.setOption("hmdReadLink", { baseURI: "./" }); // for images and links in Markdown
-    editor.setSize(null, "100%"); // set height
-    editor.on("vim-mode-change", ({ mode }) => {
-      console.log("-->", mode);
+    cmeditor.setOption("hmdReadLink", { baseURI: "./" }); // for images and links in Markdown
+    cmeditor.setSize(null, "100%"); // set height
+    cmeditor.on("vim-mode-change", ({ mode }) => {
       if (mode == "insert") {
         setTimeout(() => {
-          editor.setOption("keyMap", "hypermd");
+          cmeditor.setOption("keyMap", "hypermd");
         }, 0);
       }
     });
-    editor.on("keyHandled", (cm, name) => {
+    cmeditor.on("keyHandled", (cm, name) => {
       if (name === "Esc") {
-        console.log(cm.getOption("keyMap"));
-        editor.setOption("keyMap", "vim");
+        cmeditor.setOption("keyMap", "vim");
       }
     });
 
-    APP.init(editor);
+    APP.init(cmeditor);
 
     // for debugging
     window.CodeMirror = CodeMirror;
     window.HyperMD = HyperMD;
-    window.editor = editor;
-    window.cm = editor;
+    window.editor = cmeditor;
+    window.cm = cmeditor;
     window.APP = APP;
   }, []);
 

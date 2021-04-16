@@ -132,7 +132,6 @@
   }
 
   function handleChar(cm, ch) {
-    console.log(ch);
     var conf = getConfig(cm);
     if (!conf || cm.getOption("disableInput")) return CodeMirror.Pass;
 

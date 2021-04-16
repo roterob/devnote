@@ -17,6 +17,7 @@ import useAppStore from "../../../app-store";
 
 import "./lib/codemirror/markdown";
 import "./lib/codemirror/vim";
+import "./lib/codemirror/closebrackets";
 import * as HyperMD from "./lib/hypermd";
 import "./lib/hypermd/assets/hypermd-mode.css";
 import "./lib/hypermd/assets/hypermd.scss";
@@ -50,6 +51,7 @@ function Editor() {
         onPreview: (exp) => setMathPreview({ cm: cmeditor, exp }),
         onPreviewEnd: () => setMathPreview({ cm: cmeditor, exp: null }),
       },
+      autoCloseBrackets: true,
     });
 
     cmeditor.setOption("hmdReadLink", { baseURI: "./" }); // for images and links in Markdown

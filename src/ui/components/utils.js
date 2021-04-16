@@ -1,6 +1,4 @@
-
-
-export function searchStyle (cm, line, style) {
+export function searchStyle(cm, line, style) {
   const handle = cm.getLineHandle(line);
   let lastChar = 0;
   for (const styleIn of handle.styles) {
@@ -11,9 +9,36 @@ export function searchStyle (cm, line, style) {
     }
   }
   return 0;
-};
+}
 
-export function getCursorPosition (cm, exp) {
+export function getCmPrevLine(cm) {
+  const cursor = cm.getCursor();
+  let { line } = cursor;
+  return cm.getLine(line - 1);
+}
+
+export function getCurrentMathExpPosition(cm) {
+  const range = cm.hmd.FoldMath.editingExprPosition;
+  let line = 0,
+    ch = 0,
+    width = "auto";
+
+  if (range) {
+    const { from, to } = range;
+    const isBlock = from.line != to.line;
+    if (isBlock) {
+      width = "90%";
+      line = to.line;
+    } else {
+      line = from.line;
+      ch = from.ch;
+    }
+  }
+
+  return { ...cm.charCoords({ line, ch }, "window"), width };
+}
+
+export function getCursorPosition(cm, exp) {
   const cursor = cm.getCursor();
   let { line, ch } = cursor;
   let width = "auto";
@@ -36,4 +61,4 @@ export function getCursorPosition (cm, exp) {
   }
 
   return { ...cm.charCoords({ line, ch }, "window"), width };
-};
+}

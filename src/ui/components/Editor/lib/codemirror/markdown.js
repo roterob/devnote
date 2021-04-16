@@ -1061,7 +1061,6 @@
 
         blockCommentStart: "<!--",
         blockCommentEnd: "-->",
-        closeBrackets: "()[]{}''\"\"``",
         fold: "markdown",
       };
       return mode;

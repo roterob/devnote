@@ -90,16 +90,6 @@ $$
 f(x) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi
 $$
 
---- #todo #10/4/2021
-
-### lo básico
-- [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
-- [ ] implementar el menu contextual <kbd>Ctrl + .</kbd>
-- [ ] implementar el autocompletado en `execution mode`
-- [ ] :rotating_light: se pierde información. :rotating_light:   
-
-
-
 --- #devnote #presentacion #10/4/2021
 
 1. `devnote` es simplemente un editor. No es un servicio.
@@ -134,3 +124,13 @@ $$
 ### 🆘 ayuda contextual <kbd>Ctrl + .</kbd>
 
 ### 📐 diagramas
+
+--- #todo #10/4/2021
+
+### lo básico
+
+- [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
+- [x] autocompletar `$`.
+- [ ] implementar el menu contextual <kbd>Ctrl + .</kbd>
+- [ ] implementar el autocompletado en `execution mode`
+- [ ] :rotating_light: se pierde información. :rotating_light:

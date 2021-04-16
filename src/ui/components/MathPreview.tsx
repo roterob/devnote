@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from "react";
-import { getCursorPosition  } from "./utils";
+import { getCmPrevLine, getCurrentMathExpPosition } from "./utils";
 import useAppStore from "../../app-store";
 
 const NO_POSITION = {};
@@ -12,6 +12,11 @@ function MathPreview() {
   const spanRef = useRef();
   const visible = position != NO_POSITION;
 
+  const existExpresion = (cm, exp) => {
+    const prevLine = getCmPrevLine(cm) || "";
+    return exp && (exp !== "$" || prevLine !== "$$");
+  };
+
   useEffect(() => {
     if (mathPreview) {
       const { cm, exp } = mathPreview;
@@ -22,11 +27,11 @@ function MathPreview() {
         );
       }
 
-      if (exp) {
+      if (existExpresion(cm, exp)) {
         if (!mathRenderer.current.isReady()) {
           return;
         }
-        const { left, top, width } = getCursorPosition(cm, exp);
+        const { left, top, width } = getCurrentMathExpPosition(cm);
         mathRenderer.current.startRender(exp);
         if (!visible) {
           setPosition({ left, top: top + LINE_HEIGHT, width });

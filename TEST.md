@@ -131,6 +131,9 @@ $$
 
 - [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
 - [x] autocompletar `$`.
+- [ ] incluir excalidraw
 - [ ] implementar el menu contextual <kbd>Ctrl + .</kbd>
 - [ ] implementar el autocompletado en `execution mode`
 - [ ] :rotating_light: se pierde información. :rotating_light:
+- [ ] pensar en una estrategia de etiquetado
+

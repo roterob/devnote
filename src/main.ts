@@ -1,5 +1,5 @@
 import * as path from "path";
-import { createReadStream } from "fs";
+import { createReadStream, existsSync } from "fs";
 import { app, BrowserWindow, ipcMain, protocol, dialog } from "electron";
 import { FILE_PROTOCOL } from "./constants";
 
@@ -22,6 +22,16 @@ const requestFileHandler = (request, callback) => {
 
   const pathToFile = path.join(appState.pwd, "files", url.pathname);
   callback(createReadStream(pathToFile));
+};
+
+const staticFileHandler = (request, callback) => {
+  const fileUrl = request.url.replace("static://", "");
+  let filePath = path.join(
+    app.getAppPath(),
+    ".webpack/renderer/static",
+    fileUrl
+  );
+  callback(filePath);
 };
 
 const createWindow = (): void => {
@@ -50,6 +60,7 @@ const createWindow = (): void => {
 
   // Register protocol
   protocol.registerStreamProtocol(FILE_PROTOCOL, requestFileHandler);
+  protocol.registerFileProtocol("static", staticFileHandler);
 };
 
 // This method will be called when Electron has finished

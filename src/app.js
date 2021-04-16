@@ -1,5 +1,5 @@
-import { remote, protocol, ipcRenderer } from "electron";
-import { promises as fs, existsSync, createReadStream } from "fs";
+import { remote, ipcRenderer } from "electron";
+import { promises as fs, existsSync } from "fs";
 import * as path from "path";
 import debounce from "lodash.debounce";
 
@@ -142,6 +142,7 @@ const APP = (function () {
     setState("lastFile", fileToSave);
     return `${fileToSave} saved!`;
   }
+  function drawCommand() {}
   function insertCommand() {}
   function tocCommand() {}
   function printCommand(tags) {}

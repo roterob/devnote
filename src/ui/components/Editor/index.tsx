@@ -27,7 +27,14 @@ import "./lib/hypermd/powerpack/insert-file-with-smms";
 
 function Editor() {
   const setMathPreview = useAppStore((store) => store.setMathPreview);
+  const setDrawMode = useAppStore((store) => store.setDrawMode);
+
   const textAreaRef = useRef();
+
+  const drawHandler = function (arg1, arg2) {
+    console.log(arg1, arg2);
+    setDrawMode({});
+  };
 
   useEffect(() => {
     const cmeditor = HyperMD.fromTextArea(textAreaRef.current, {
@@ -69,6 +76,8 @@ function Editor() {
       }
     });
 
+    CodeMirror.Vim.defineEx("draw", "dr", drawHandler);
+
     APP.init(cmeditor);
 
     // for debugging
@@ -79,7 +88,11 @@ function Editor() {
     window.APP = APP;
   }, []);
 
-  return <textarea ref={textAreaRef} style={{ display: "none" }}></textarea>;
+  return (
+    <div id="editor_area">
+      <textarea ref={textAreaRef} style={{ display: "none" }}></textarea>
+    </div>
+  );
 }
 
 export default Editor;

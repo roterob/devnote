@@ -5,6 +5,6 @@ import AppUI from "./ui";
 
 import "./index.scss";
 
-ReactDOM.render(<AppUI />, document.getElementById("editor_area"));
+ReactDOM.render(<AppUI />, document.getElementById("devnote"));
 
 export default hot(module)(AppUI);

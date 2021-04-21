@@ -7,7 +7,6 @@ type AppState = {
   };
   drawMode: {
     app?: any;
-    content?: any;
   };
   setMathPreview: (v: any) => void;
   setDrawMode: (v: any) => void;

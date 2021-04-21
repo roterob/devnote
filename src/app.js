@@ -1,5 +1,5 @@
 import { remote, ipcRenderer } from "electron";
-import { promises as fs, existsSync } from "fs";
+import { promises as fs, existsSync, createWriteStream, mkdirSync } from "fs";
 import * as path from "path";
 import debounce from "lodash.debounce";
 
@@ -11,6 +11,7 @@ import {
   getHumanizedDateTime,
   objectId,
 } from "./utils";
+import { switchToHyperMD } from "./ui/components/Editor/lib/hypermd";
 
 const { app } = remote;
 
@@ -148,23 +149,48 @@ const APP = (function () {
   function printCommand(tags) {}
 
   async function uploadFile(file) {
-    const [name, extension] = file.name.split(".");
-    const idName = `${objectId()}.${extension}`;
+    saveFile(file);
+  }
+
+  async function saveDraw(elementsBlob, png) {
+    const elementsId = objectId();
+    await saveFile(elementsBlob, `${elementsId}.exca`);
+    const url = await saveFile(png, `${elementsId}.png`);
+    insertImageInEditor(`${url}&exca=${elementsId}`);
+    return url;
+  }
+
+  function insertImageInEditor(url) {
+    const actions = editor.hmd.InsertFile.getActionHandler(editor);
+    actions.finish(`![](${url})`);
+  }
+
+  async function saveFile(file, fileName) {
+    let originalName = "";
+    if (!fileName) {
+      const [name, extension] = file.name.split(".");
+      fileName = `${objectId()}.${extension}`;
+      originalName = name;
+    }
+
+    const [name, extension] = fileName.split(".");
+
     const fileRepository = path.join(state.pwd, "files");
     if (!existsSync(fileRepository)) {
       await fs.mkdir(fileRepository, { recursive: true });
     }
 
-    const filePath = path.join(state.pwd, "files", idName);
+    const filePath = path.join(state.pwd, "files", fileName);
     const buffer = await file.arrayBuffer();
     const data = new Uint8Array(buffer);
     await fs.writeFile(filePath, data);
-    return `${FILE_PROTOCOL}://${idName}?name=${name}&ext=${extension}&type=${file.type}`;
+    return `${FILE_PROTOCOL}://${fileName}?name=${originalName}&ext=${extension}`;
   }
 
   return {
     init,
     uploadFile,
+    saveDraw,
     pwdCommand,
     cwdCommand,
     openCommand,

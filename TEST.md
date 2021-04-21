@@ -125,10 +125,13 @@ $$
 
 ### 📐 diagramas
 
+### 🎨 dibjujos
+
+![](devnote://607fc8fb3e02c8b860bed2bb.png?name=temp&ext=png&type=)
+
 --- #todo #10/4/2021
 
 ### lo básico
-
 - [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
 - [x] autocompletar `$`.
 - [ ] incluir excalidraw 
@@ -137,4 +140,11 @@ $$
 - [ ] :rotating_light: se pierde información. :rotating_light:
 - [ ] pensar en una estrategia de etiquetado
 - [ ] evitar renderizar directamente en el `body`
+
+
+#### Incluir excalidraw
+
+Implementar el comando `:draw` con dos posibilidades:
+* Cuando se lanza sobre una línea _no vacía_ se buscará en la línea (a partir de la posición del actual del cursor) una imagen que tenga extensión `excalidraw` y se lanzará el editor para editar dicha imagen guardada.
+* Cuando se lanza sobre una línea vacía se lanzará el editor para crear una nueva imagen e insertarla en la posición indicada.
 

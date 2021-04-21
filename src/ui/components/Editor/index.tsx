@@ -33,7 +33,7 @@ function Editor() {
 
   const drawHandler = function (arg1, arg2) {
     console.log(arg1, arg2);
-    setDrawMode({});
+    setDrawMode({ app: APP });
   };
 
   useEffect(() => {

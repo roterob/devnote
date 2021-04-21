@@ -29,6 +29,8 @@ export interface HandlerAction {
    */
   finish(text: string, cursor?: number);
 
+  clear();
+
   marker: CodeMirror.TextMarker;
   cm: cm_t;
 }
@@ -183,6 +185,57 @@ export class InsertFile implements Addon.Addon, Options /* if needed */ {
     ).bind(this, "byDrop", true);
   }
 
+  getActionHandler(cm): HandlerAction {
+    cm.replaceSelection(".");
+    var posTo = cm.getCursor();
+    var posFrom = { line: posTo.line, ch: posTo.ch - 1 };
+
+    var placeholderContainer = document.createElement("span");
+    var marker = cm.markText(posFrom, posTo, {
+      replacedWith: placeholderContainer,
+      clearOnEnter: false,
+      handleMouseEvents: false,
+    });
+
+    var action: HandlerAction = {
+      marker,
+      cm,
+
+      finish: (text, cursor) =>
+        cm.operation(() => {
+          var range = marker.find();
+          var posFrom = range.from,
+            posTo = range.to;
+          cm.replaceRange(text, posFrom, posTo);
+          marker.clear();
+
+          if (typeof cursor === "number")
+            cm.setCursor({
+              line: posFrom.line,
+              ch: posFrom.ch + cursor,
+            });
+        }),
+
+      setPlaceholder: (el) => {
+        if (placeholderContainer.childNodes.length > 0)
+          placeholderContainer.removeChild(placeholderContainer.firstChild);
+        placeholderContainer.appendChild(el);
+
+        marker.changed();
+      },
+
+      resize() {
+        marker.changed();
+      },
+
+      clear() {
+        marker.clear();
+      }
+    };
+
+    return action;
+  }
+
   /**
    * upload files to the current cursor.
    *
@@ -207,53 +260,11 @@ export class InsertFile implements Addon.Addon, Options /* if needed */ {
     if (typeof fileHandler !== "function") return false;
 
     cm.operation(() => {
-      // create a placeholder
-      cm.replaceSelection(".");
-      var posTo = cm.getCursor();
-      var posFrom = { line: posTo.line, ch: posTo.ch - 1 };
-
-      var placeholderContainer = document.createElement("span");
-      var marker = cm.markText(posFrom, posTo, {
-        replacedWith: placeholderContainer,
-        clearOnEnter: false,
-        handleMouseEvents: false,
-      });
-
-      var action: HandlerAction = {
-        marker,
-        cm,
-
-        finish: (text, cursor) =>
-          cm.operation(() => {
-            var range = marker.find();
-            var posFrom = range.from,
-              posTo = range.to;
-            cm.replaceRange(text, posFrom, posTo);
-            marker.clear();
-
-            if (typeof cursor === "number")
-              cm.setCursor({
-                line: posFrom.line,
-                ch: posFrom.ch + cursor,
-              });
-          }),
-
-        setPlaceholder: (el) => {
-          if (placeholderContainer.childNodes.length > 0)
-            placeholderContainer.removeChild(placeholderContainer.firstChild);
-          placeholderContainer.appendChild(el);
-
-          marker.changed();
-        },
-
-        resize() {
-          marker.changed();
-        },
-      };
+      var action = this.getActionHandler(cm);
 
       handled = fileHandler(files, action);
 
-      if (!handled) marker.clear();
+      if (!handled) action.clear();
     });
 
     return handled;

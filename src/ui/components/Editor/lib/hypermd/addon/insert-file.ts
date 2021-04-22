@@ -201,7 +201,7 @@ export class InsertFile implements Addon.Addon, Options /* if needed */ {
       marker,
       cm,
 
-      finish: (text, cursor) =>
+      finish: (text, cursor) => {
         cm.operation(() => {
           var range = marker.find();
           var posFrom = range.from,
@@ -214,7 +214,8 @@ export class InsertFile implements Addon.Addon, Options /* if needed */ {
               line: posFrom.line,
               ch: posFrom.ch + cursor,
             });
-        }),
+        });
+      },
 
       setPlaceholder: (el) => {
         if (placeholderContainer.childNodes.length > 0)
@@ -230,7 +231,7 @@ export class InsertFile implements Addon.Addon, Options /* if needed */ {
 
       clear() {
         marker.clear();
-      }
+      },
     };
 
     return action;

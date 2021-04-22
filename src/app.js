@@ -149,7 +149,7 @@ const APP = (function () {
   function printCommand(tags) {}
 
   async function uploadFile(file) {
-    saveFile(file);
+    return saveFile(file);
   }
 
   async function saveDraw(elementsBlob, png) {

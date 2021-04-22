@@ -148,3 +148,4 @@ Implementar el comando `:draw` con dos posibilidades:
 * Cuando se lanza sobre una línea _no vacía_ se buscará en la línea (a partir de la posición del actual del cursor) una imagen que tenga extensión `excalidraw` y se lanzará el editor para editar dicha imagen guardada.
 * Cuando se lanza sobre una línea vacía se lanzará el editor para crear una nueva imagen e insertarla en la posición indicada.
 
+![6081dcd05a10410d8430b596.png](devnote://6081def22995623cf454b3b6.png?name=6081dcd05a10410d8430b596&ext=png&align=center) 

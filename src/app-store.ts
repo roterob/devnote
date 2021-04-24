@@ -7,6 +7,11 @@ type AppState = {
   };
   drawMode: {
     app?: any;
+    drawInfo?: {
+      drawId: string;
+      elements: any[];
+      align: string;
+    };
   };
   setMathPreview: (v: any) => void;
   setDrawMode: (v: any) => void;

@@ -896,6 +896,7 @@
     { name: "pwd" },
     { name: "echo" },
     { name: "cwd" },
+    { name: "draw" },
     { name: "filter", shortName: "f" },
     { name: "from" },
     { name: "edit", shortName: "e" },
@@ -6207,6 +6208,9 @@
         APP.writeCommand(params.args && params.args[0])
           .then((res) => showConfirm(cm, res))
           .catch((e) => showError(cm, e));
+      },
+      draw: function (cm, params) {
+        APP.drawCommand().catch((e) => showError(cm, e));
       },
       setlocal: function (cm, params) {
         // setCfg is passed through to setOption

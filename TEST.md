@@ -134,14 +134,19 @@ $$
 ### lo básico
 - [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
 - [x] autocompletar `$`.
-- [ ] incluir excalidraw 
-- [ ] implementar el menu contextual <kbd>Ctrl + .</kbd>
 - [ ] implementar el autocompletado en `execution mode`
-- [ ] :rotating_light: se pierde información. :rotating_light:
-- [ ] pensar en una estrategia de etiquetado
+- [x] :rotating_light: se pierde información. :rotating_light:
+- [ ] pensar en una estrategia de etiquetado [[]]
 - [ ] evitar renderizar directamente en el `body`
-
-
+- [ ] comandos básicos
+  - [x] **draw**: excalidraw. Si estoy sobre un dibujo abrirlo para su edición.
+  - [ ] **duplicate**: duplica la vista actual y le actualiza las fechas.
+  - [ ] afinar el filtrado. Incluir filtrado por bloques: `@[math|todo|draw|image|...]`
+  - [ ] **default**: lanzar la acción por defecto sobre la línea actual. [[]]
+  - [ ] **linkto**: crear una sección enlazada desde la actual. 🤔
+  - [ ] el puto autocompletado.
+  
+  
 #### Incluir excalidraw
 
 Implementar el comando `:draw` con dos posibilidades:
@@ -149,3 +154,13 @@ Implementar el comando `:draw` con dos posibilidades:
 * Cuando se lanza sobre una línea vacía se lanzará el editor para crear una nueva imagen e insertarla en la posición indicada.
 
 ![6081dcd05a10410d8430b596.png](devnote://6081def22995623cf454b3b6.png?name=6081dcd05a10410d8430b596&ext=png&align=center) 
+
+--- 
+
+Esta podría ser la estructura por defecto para un día de trabajo. Está claro que dependerá del ámbito en el que estémos: tabajo, estudio, etc. Este concepto me puede ayudar a la hora de las _daylies_, _retrospetives_, etc.
+
+![](devnote://6083065c4af3c41aff542b48.png?name=&ext=png&exca=6083065c4af3c41aff542b48&align=&ts=1619284274557)
+
+--- 
+
+

@@ -17,6 +17,19 @@ export function getCmPrevLine(cm) {
   return cm.getLine(line - 1);
 }
 
+export function getCmCurrentLine(cm) {
+  const cursor = cm.getCursor();
+  let { line } = cursor;
+  return cm.getLine(line);
+}
+
+export function replaceCmCurrentLine(cm, value) {
+  const cursor = cm.getCursor();
+  const { line, ch } = cursor;
+  const lineLength = cm.getLine(line).length;
+  cm.replaceRange(value, { line, ch: 0 }, { line, ch: lineLength });
+}
+
 export function getCurrentMathExpPosition(cm) {
   const range = cm.hmd.FoldMath.editingExprPosition;
   let line = 0,

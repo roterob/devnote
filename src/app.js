@@ -1,7 +1,6 @@
 import { remote, ipcRenderer } from "electron";
 import { promises as fs, existsSync, createWriteStream, mkdirSync } from "fs";
 import * as path from "path";
-import debounce from "lodash.debounce";
 
 import document from "./document";
 import { FILE_PROTOCOL } from "./constants";
@@ -11,26 +10,24 @@ import {
   getHumanizedDateTime,
   objectId,
 } from "./utils";
-import { switchToHyperMD } from "./ui/components/Editor/lib/hypermd";
+import { getCmCurrentLine, replaceCmCurrentLine } from "./ui/components/utils";
 
 const { app } = remote;
 
 const APP = (function () {
   let state = {};
   let editor = null;
+  let store = null;
   let mdDocument = null;
   let currentChanged = false;
-
-  const writeFile = debounce((data) => {
-    fs.writeFileSync(file, data);
-  }, 1000);
 
   const editorChangeHandler = (cm, changeObj) => {
     currentChanged = true;
   };
 
-  function init(cm) {
+  function init(cm, storeSetters) {
     editor = cm;
+    store = storeSetters;
     state = JSON.parse(localStorage.getItem("dn-state") || "{}");
     ipcRenderer.invoke("devnote-update-state", state);
     //defaults;
@@ -152,17 +149,41 @@ const APP = (function () {
     return saveFile(file);
   }
 
-  async function saveDraw(elementsBlob, png) {
-    const elementsId = objectId();
+  async function saveDraw(elementsBlob, png, drawInfo) {
+    const elementsId = (drawInfo || {}).drawId || objectId();
     await saveFile(elementsBlob, `${elementsId}.exca`);
     const url = await saveFile(png, `${elementsId}.png`);
-    insertImageInEditor(`${url}&exca=${elementsId}`);
+    insertImageInEditor(
+      `${url}&exca=${elementsId}&align=${
+        (drawInfo || {}).align || ""
+      }&ts=${new Date().getTime()}`
+    );
     return url;
   }
 
+  async function getDrawInfo() {
+    const line = getCmCurrentLine(editor);
+    if (line) {
+      if (line.match(/exca=(\w+)/)) {
+        const drawId = RegExp.$1;
+        const filePath = path.join(state.pwd, "files", `${drawId}.exca`);
+        const content = await fs.readFile(filePath);
+        const { elements } = JSON.parse(content.toString());
+        let align = "";
+        if (line.match(/align=(\w*)/)) {
+          align = RegExp.$1;
+        }
+        return { drawId, elements, align };
+      } else {
+        throw "must be a draw or a empty line";
+      }
+    }
+    return null;
+  }
+
   function insertImageInEditor(url) {
-    const actions = editor.hmd.InsertFile.getActionHandler(editor);
-    actions.finish(`![](${url})`);
+    const value = `![](${url})`;
+    replaceCmCurrentLine(editor, value);
   }
 
   async function saveFile(file, fileName) {
@@ -187,6 +208,11 @@ const APP = (function () {
     return `${FILE_PROTOCOL}://${fileName}?name=${originalName}&ext=${extension}`;
   }
 
+  async function drawCommand() {
+    const drawInfo = await APP.getDrawInfo();
+    store.setDrawMode({ app: APP, drawInfo });
+  }
+
   return {
     init,
     uploadFile,
@@ -198,6 +224,8 @@ const APP = (function () {
     filterCommand,
     fromCommand,
     writeCommand,
+    drawCommand,
+    getDrawInfo,
   };
 })();
 

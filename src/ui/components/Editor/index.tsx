@@ -31,11 +31,6 @@ function Editor() {
 
   const textAreaRef = useRef();
 
-  const drawHandler = function (arg1, arg2) {
-    console.log(arg1, arg2);
-    setDrawMode({ app: APP });
-  };
-
   useEffect(() => {
     const cmeditor = HyperMD.fromTextArea(textAreaRef.current, {
       keyMap: "vim",
@@ -76,9 +71,9 @@ function Editor() {
       }
     });
 
-    CodeMirror.Vim.defineEx("draw", "dr", drawHandler);
+    // CodeMirror.Vim.defineEx("draw", "dr", drawHandler);
 
-    APP.init(cmeditor);
+    APP.init(cmeditor, { setDrawMode, setMathPreview });
 
     // for debugging
     window.CodeMirror = CodeMirror;

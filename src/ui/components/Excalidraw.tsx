@@ -4,7 +4,7 @@ declare global {
   }
 }
 
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import useAppStore from "../../app-store";
 import Modal from "./Modal";
 import { exportToBlob } from "@excalidraw/excalidraw";
@@ -34,7 +34,7 @@ function Excalidraw() {
     //   elements,
     //   appState,
     // });
-  }
+  };
 
   const saveFile = function () {
     return {
@@ -46,19 +46,27 @@ function Excalidraw() {
         const elements = excalidrawRef.current.getSceneElements();
         const appState = excalidrawRef.current.getAppState();
         const png = await exportToBlob({ elements, appState });
-        await drawMode.app?.saveDraw(this.blob, png)
+        const { app, drawInfo } = drawMode;
+        await app.saveDraw(this.blob, png, drawInfo);
         handleClose();
-      }
+      },
     };
   };
 
-  const initialData = {
-    appState: {
-      fileHandle: {
-        createWritable: saveFile
-      },
+  const initialData = useMemo(() => {
+    if (drawMode) {
+      const { drawInfo } = drawMode;
+      return {
+        elements: drawInfo ? drawInfo.elements : [],
+        appState: {
+          fileHandle: {
+            createWritable: saveFile,
+          },
+        },
+      };
     }
-  }
+    return null;
+  }, [drawMode]);
 
   useEffect(() => {
     import("@excalidraw/excalidraw").then((comp) => setComp(comp.default));
@@ -67,7 +75,15 @@ function Excalidraw() {
   return (
     drawMode && (
       <Modal onClose={handleClose}>
-        <>{Comp && <Comp ref={excalidrawRef} onChange={handleChange} {...{ UIOptions, initialData }} />}</>
+        <>
+          {Comp && (
+            <Comp
+              ref={excalidrawRef}
+              onChange={handleChange}
+              {...{ UIOptions, initialData }}
+            />
+          )}
+        </>
       </Modal>
     )
   );

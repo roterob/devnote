@@ -109,7 +109,7 @@ $$
 
 ### 🏕 imágenes
 
-![iconfinder_text-editor_3246744.png](devnote://6071e277c0ea972a5eb4caf9.png?name=iconfinder_text-editor_3246744&ext=png&type=image/png)
+![6084530ec382e5aa19e21415.png](devnote://60848c90d4442918b6afecbc.png?name=6084530ec382e5aa19e21415&ext=png) 
 
 ### $\infin$ fórmulas
 
@@ -127,7 +127,8 @@ $$
 
 ### 🎨 dibjujos
 
-![](devnote://607fc8fb3e02c8b860bed2bb.png?name=temp&ext=png&type=)
+![](devnote://60848cb699a9b557db6d1cf8.png?name=&ext=png&exca=60848cb699a9b557db6d1cf8&align=center&ts=1619299589496)
+
 
 --- #todo #10/4/2021
 
@@ -153,14 +154,10 @@ Implementar el comando `:draw` con dos posibilidades:
 * Cuando se lanza sobre una línea _no vacía_ se buscará en la línea (a partir de la posición del actual del cursor) una imagen que tenga extensión `excalidraw` y se lanzará el editor para editar dicha imagen guardada.
 * Cuando se lanza sobre una línea vacía se lanzará el editor para crear una nueva imagen e insertarla en la posición indicada.
 
-![6081dcd05a10410d8430b596.png](devnote://6081def22995623cf454b3b6.png?name=6081dcd05a10410d8430b596&ext=png&align=center) 
-
 --- 
 
 Esta podría ser la estructura por defecto para un día de trabajo. Está claro que dependerá del ámbito en el que estémos: tabajo, estudio, etc. Este concepto me puede ayudar a la hora de las _daylies_, _retrospetives_, etc.
 
-![](devnote://6083065c4af3c41aff542b48.png?name=&ext=png&exca=6083065c4af3c41aff542b48&align=&ts=1619284274557)
-
---- 
+![](devnote://60848d4933eb29d0f13ba5c9.png?name=&ext=png&exca=60848d4933eb29d0f13ba5c9&align=&ts=1619299720213)
 
 

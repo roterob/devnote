@@ -76,10 +76,6 @@
     { keys: "<C-c>", type: "keyToKey", toKeys: "<Esc>" },
     { keys: "<C-[>", type: "keyToKey", toKeys: "<Esc>", context: "insert" },
     { keys: "<C-c>", type: "keyToKey", toKeys: "<Esc>", context: "insert" },
-    { keys: "s", type: "keyToKey", toKeys: "cl", context: "normal" },
-    { keys: "s", type: "keyToKey", toKeys: "c", context: "visual" },
-    { keys: "S", type: "keyToKey", toKeys: "cc", context: "normal" },
-    { keys: "S", type: "keyToKey", toKeys: "VdO", context: "visual" },
     { keys: "<Home>", type: "keyToKey", toKeys: "0" },
     { keys: "<End>", type: "keyToKey", toKeys: "$" },
     { keys: "<PageUp>", type: "keyToKey", toKeys: "<C-b>" },
@@ -684,6 +680,24 @@
       actionArgs: { blockwise: true },
     },
     { keys: "gv", type: "action", action: "reselectLastSelection" },
+    {
+      keys: "sb",
+      type: "action",
+      action: "toggleFormat",
+      actionArgs: { surround: "**" },
+    },
+    {
+      keys: "se",
+      type: "action",
+      action: "toggleFormat",
+      actionArgs: { surround: "*" },
+    },
+    {
+      keys: "sd",
+      type: "action",
+      action: "toggleFormat",
+      actionArgs: { surround: "~~" },
+    },
     { keys: "J", type: "action", action: "joinLines", isEdit: true },
     {
       keys: "gJ",
@@ -3643,6 +3657,56 @@
               ? "blockwise"
               : "",
           });
+        }
+      },
+      toggleFormat: function (cm, actionArgs, vim) {
+        var surround = actionArgs.surround;
+        var oldCur = copyCursor(cm.getCursor());
+        var region = expandWordUnderCursor(cm);
+        if (vim.visualMode) {
+          var selectedArea = getSelectedAreaRange(cm, vim);
+          if (
+            selectedArea.length !== 2 ||
+            selectedArea[0].line != selectedArea[1].line
+          ) {
+            return;
+          }
+          region = {
+            start: selectedArea[0],
+            end: selectedArea[1],
+          };
+        }
+
+        var expandedRegion = {
+          start: {
+            line: region.start.line,
+            ch: region.start.ch - surround.length,
+          },
+          end: {
+            line: region.end.line,
+            ch: region.end.ch + surround.length,
+          },
+        };
+        var text = cm.getRange(region.start, region.end);
+        var expandedText = cm.getRange(
+          expandedRegion.start,
+          expandedRegion.end
+        );
+        if (
+          expandedText.startsWith(surround) &&
+          expandedText.endsWith(surround)
+        ) {
+          cm.replaceRange(text, expandedRegion.start, expandedRegion.end);
+        } else {
+          cm.replaceRange(
+            `${surround}${text}${surround}`,
+            region.start,
+            region.end
+          );
+        }
+        cm.setCursor(oldCur);
+        if (vm.visualMode) {
+          exitVisualMode(cm, true);
         }
       },
       joinLines: function (cm, actionArgs, vim) {

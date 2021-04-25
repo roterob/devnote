@@ -11,7 +11,8 @@ import { cm_t } from "./type";
 
 import "codemirror/addon/fold/foldcode";
 import "codemirror/addon/fold/foldgutter";
-import "codemirror/addon/fold/markdown-fold";
+import "../../codemirror/markdown-fold";
+import "../../codemirror/closebrackets";
 
 import "codemirror/lib/codemirror.css";
 import "codemirror/addon/fold/foldgutter.css";

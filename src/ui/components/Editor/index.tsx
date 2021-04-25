@@ -17,7 +17,6 @@ import useAppStore from "../../../app-store";
 
 import "./lib/codemirror/markdown";
 import "./lib/codemirror/vim";
-import "./lib/codemirror/closebrackets";
 import * as HyperMD from "./lib/hypermd";
 import "./lib/hypermd/assets/hypermd-mode.css";
 import "./lib/hypermd/assets/hypermd.scss";
@@ -34,8 +33,8 @@ function Editor() {
   useEffect(() => {
     const cmeditor = HyperMD.fromTextArea(textAreaRef.current, {
       keyMap: "vim",
-      lineNumbers: false,
-      foldGutter: false,
+      lineNumbers: true,
+      foldGutter: true,
       viewportMargin: Infinity,
       mode: {
         name: "hypermd",

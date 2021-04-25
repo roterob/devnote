@@ -419,9 +419,21 @@
     }
 
     @for $i from 1 through 9 {
+        $next: $i + 1;
+        $next_next: $i + 2;
         $indent_i: $list-indent * $i + $list-margin;
 
         pre.HyperMD-list-line-#{$i} {
+            padding-left: $line-padding + $indent_i;
+        }
+
+        // FIX for lists folding
+
+        pre.HyperMD-list-line-#{$i}.HyperMD-list-line-#{$next} {
+            padding-left: $line-padding + $indent_i;
+        }
+
+        pre.HyperMD-list-line-#{$i}.HyperMD-list-line-#{$next_next} {
             padding-left: $line-padding + $indent_i;
         }
     }

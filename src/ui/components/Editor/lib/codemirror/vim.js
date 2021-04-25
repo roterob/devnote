@@ -63,7 +63,6 @@
     { keys: "<Right>", type: "keyToKey", toKeys: "l" },
     { keys: "<Up>", type: "keyToKey", toKeys: "k" },
     { keys: "<Down>", type: "keyToKey", toKeys: "j" },
-    { keys: "<Space>", type: "keyToKey", toKeys: "l" },
     { keys: "<BS>", type: "keyToKey", toKeys: "h", context: "normal" },
     { keys: "<Del>", type: "keyToKey", toKeys: "x", context: "normal" },
     { keys: "<C-Space>", type: "keyToKey", toKeys: "W" },
@@ -80,7 +79,6 @@
     { keys: "<End>", type: "keyToKey", toKeys: "$" },
     { keys: "<PageUp>", type: "keyToKey", toKeys: "<C-b>" },
     { keys: "<PageDown>", type: "keyToKey", toKeys: "<C-f>" },
-    { keys: "<CR>", type: "keyToKey", toKeys: "j^", context: "normal" },
     {
       keys: "<Ins>",
       type: "action",
@@ -799,6 +797,17 @@
       actionArgs: { position: "bottom" },
       motion: "moveToFirstNonWhiteSpaceCharacter",
     },
+    {
+      keys: "za",
+      type: "action",
+      action: "toggleFold",
+      actionArgs: {},
+    },
+    { keys: "<Space>", type: "action", action: "toggleFold" },
+    { keys: "zo", type: "action", action: "openFold" },
+    { keys: "zc", type: "action", action: "closeFold" },
+    { keys: "zm", type: "action", action: "foldAll" },
+    { keys: "zr", type: "action", action: "unfoldAll" },
     { keys: ".", type: "action", action: "repeatLastEdit" },
     {
       keys: "<C-a>",
@@ -3658,6 +3667,27 @@
               : "",
           });
         }
+      },
+      toggleFold: function (cm, actionArgs, vim) {
+        cm.foldCode(cm.getCursor(), { scanUp: true });
+      },
+      openFold: function (cm, actionArgs, vim) {
+        cm.foldCode(cm.getCursor(), null, "unfold");
+      },
+      closeFold: function (cm, actionArgs, vim) {
+        cm.foldCode(cm.getCursor(), null, "fold");
+      },
+      foldAll: function (cm, actionArgs, vim) {
+        cm.operation(function () {
+          for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i++)
+            cm.foldCode(CodeMirror.Pos(i, 0), null, "fold");
+        });
+      },
+      unfoldAll: function (cm, actionArgs, vim) {
+        cm.operation(function () {
+          for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i++)
+            cm.foldCode(CodeMirror.Pos(i, 0), null, "unfold");
+        });
       },
       toggleFormat: function (cm, actionArgs, vim) {
         var surround = actionArgs.surround;

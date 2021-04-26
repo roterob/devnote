@@ -33,9 +33,9 @@ function Editor() {
   useEffect(() => {
     const cmeditor = HyperMD.fromTextArea(textAreaRef.current, {
       keyMap: "vim",
-      lineNumbers: true,
+      lineNumbers: false,
       foldGutter: true,
-      viewportMargin: Infinity,
+      // viewportMargin: Infinity,
       mode: {
         name: "hypermd",
         hashtag: true, // this syntax is not actived by default

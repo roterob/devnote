@@ -803,7 +803,7 @@
       action: "toggleFold",
       actionArgs: {},
     },
-    { keys: "<Space>", type: "action", action: "toggleFold" },
+    { keys: "<CR>", type: "action", action: "toggleFold" },
     { keys: "zo", type: "action", action: "openFold" },
     { keys: "zc", type: "action", action: "closeFold" },
     { keys: "zm", type: "action", action: "foldAll" },
@@ -3735,7 +3735,7 @@
           );
         }
         cm.setCursor(oldCur);
-        if (vm.visualMode) {
+        if (vim.visualMode) {
           exitVisualMode(cm, true);
         }
       },

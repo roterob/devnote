@@ -5,8 +5,8 @@ function mdDocument(md, parent) {
   let me = null;
 
   function addTagIndex(tag, sectionId) {
-    const list = tagIndex[tag] || [];
-    list.push(sectionId);
+    const list = tagIndex[tag] || new Set();
+    list.add(sectionId);
     tagIndex[tag] = list;
   }
 
@@ -35,6 +35,9 @@ function mdDocument(md, parent) {
         for (const tag of tags) {
           addTagIndex(tag, dateMS);
         }
+        if (parent) {
+          parent.setMsCounter(msCounter);
+        }
       }
     }
 
@@ -51,9 +54,9 @@ function mdDocument(md, parent) {
 
     for (let line of lines) {
       if (line.startsWith("--- #")) {
+        msCounter += 1;
         addSection();
         tags = [...line.matchAll(TAG_RE)].map((m) => m[1]);
-        msCounter += 1;
         const [ms, tagFound] = getSectionDateInMS(line);
         // to keep seccion order and uniqueness
         dateMS = ms + msCounter;
@@ -79,7 +82,7 @@ function mdDocument(md, parent) {
       tags.forEach((tag) => {
         const index = tagIndex[tag];
         if (index) {
-          Array.prototype.push.apply(sections, index);
+          Array.prototype.push.apply(sections, [...index]);
         }
       });
     }
@@ -110,9 +113,7 @@ function mdDocument(md, parent) {
   function removeFilteredSections() {
     Object.values(filteredDocument).forEach((section) => {
       section.tags.forEach((tag) => {
-        tagIndex[tag] = tagIndex[tag].filter(
-          (sectionId) => sectionId !== section.id
-        );
+        tagIndex[tag].delete(section.id);
       });
       delete document[section.id];
     });
@@ -125,7 +126,7 @@ function mdDocument(md, parent) {
       buildDocument(md);
     } else {
       removeFilteredSections();
-      mdDocument(md, me);
+      const auxDoc = mdDocument(md, me);
     }
   }
 
@@ -145,6 +146,7 @@ function mdDocument(md, parent) {
     getTagIndex: () => tagIndex,
     getFilteredSections: () => filteredDocument,
     getMsCounter: () => msCounter,
+    setMsCounter: (counter) => msCounter = counter,
     filter,
     updateCurrentSections,
     toString,

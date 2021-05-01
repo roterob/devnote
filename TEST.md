@@ -90,6 +90,27 @@ $$
 f(x) = \int_{-\infty}^\infty \hat{f}(\xi)\,e^{2 \pi i \xi x}\,d\xi
 $$
 
+--- #todo #10/4/2021
+
+### lo básico
+- [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
+- [x] autocompletar `$`.
+- [x] folding.
+- [x] :rotating_light: se pierde información. :rotating_light: $\implies$ Cuando se aplican varios filtros seguidos y se hace una modificación parece que hay problemas.
+  * Se estaban genereando identificadores de sección repetidos debido a que el msCount no se estaba acutalizando correctamente (por no ser un valor por referencia).
+- [ ] implementar el autocompletado en `execution mode`
+- [ ] exportado pdf.
+- [ ] pensar en una estrategia de etiquetado. Dar sentido a la sección `devnote`.
+- [ ] evitar renderizar directamente en el `body`
+- [ ] comandos básicos
+  - [x] **draw**: excalidraw. Si estoy sobre un dibujo abrirlo para su edición.
+  - [ ] **last** & **first**: para limitar el número de resultados.
+  - [ ] **duplicate**: duplica la vista actual y le actualiza las fechas.
+  - [ ] afinar el filtrado. Incluir filtrado por bloques: `@[math|todo|draw|image|...]`
+  - [ ] **linkto**: crear una sección enlazada desde la actual. 🤔
+    - Pensar el workflow de creación y navegación entre enlaces. [[]]
+  - [ ] el puto autocompletado.
+ 
 --- #devnote #presentacion #10/4/2021
 
 1. `devnote` es simplemente un editor. No es un servicio.
@@ -129,25 +150,6 @@ $$
 
 ![](devnote://60848cb699a9b557db6d1cf8.png?name=&ext=png&exca=60848cb699a9b557db6d1cf8&align=center&ts=1619299589496)
 
---- #todo #10/4/2021
-
-### lo básico
-- [x] elegir una librería para manejar el estado: ✔ [zustang](https://github.com/pmndrs/zustand) vs ❌ [unstated](https://github.com/jamiebuilds/unstated-next)
-- [x] autocompletar `$`.
-- [ ] implementar el autocompletado en `execution mode`
-- [ ] :rotating_light: se pierde información. :rotating_light: $\implies$ Cuando se aplican varios filtros seguidos y se hace una modificación parece que hay problemas.
-- [ ] folding.
-- [ ] exportado pdf.
-- [ ] pensar en una estrategia de etiquetado. Dar sentido a la sección `devnote`.
-- [ ] evitar renderizar directamente en el `body`
-- [ ] comandos básicos
-  - [x] **draw**: excalidraw. Si estoy sobre un dibujo abrirlo para su edición.
-  - [ ] **duplicate**: duplica la vista actual y le actualiza las fechas.
-  - [ ] afinar el filtrado. Incluir filtrado por bloques: `@[math|todo|draw|image|...]`
-  - [ ] **linkto**: crear una sección enlazada desde la actual. 🤔
-    - Pensar el workflow de creación y navegación entre enlaces. [[]]
-  - [ ] el puto autocompletado.
- 
 --- #implementation #25/4/2021
 
 ### Incluir excalidraw

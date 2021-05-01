@@ -24,7 +24,7 @@
     function listLevel(lineNo) {
       var line = cm.getLine(lineNo);
       var res = -1;
-      if (line.match(/^(\s*)(\+|-|\*|\d+\.)? /)) {
+      if (line && line.match(/^(\s*)(\+|-|\*|\d+\.)? /)) {
         res = RegExp.$1.length;
       }
       return res;

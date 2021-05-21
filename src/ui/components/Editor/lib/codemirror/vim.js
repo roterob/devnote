@@ -696,6 +696,12 @@
       action: "toggleFormat",
       actionArgs: { surround: "~~" },
     },
+    {
+      keys: "sc",
+      type: "action",
+      action: "toggleFormat",
+      actionArgs: { surround: "`" },
+    },
     { keys: "J", type: "action", action: "joinLines", isEdit: true },
     {
       keys: "gJ",
@@ -808,6 +814,7 @@
     { keys: "zc", type: "action", action: "closeFold" },
     { keys: "zm", type: "action", action: "foldAll" },
     { keys: "zr", type: "action", action: "unfoldAll" },
+    { keys: "zd", type: "action", action: "foldDown" },
     { keys: ".", type: "action", action: "repeatLastEdit" },
     {
       keys: "<C-a>",
@@ -3687,6 +3694,12 @@
         cm.operation(function () {
           for (var i = cm.firstLine(), e = cm.lastLine(); i <= e; i++)
             cm.foldCode(CodeMirror.Pos(i, 0), null, "unfold");
+        });
+      },
+      foldDown: function (cm, actionArgs, vim) {
+        cm.operation(function () {
+          for (var i = cm.getCursor().line, e = cm.lastLine(); i <= e; i++)
+            cm.foldCode(CodeMirror.Pos(i, 0), null, "fold");
         });
       },
       toggleFormat: function (cm, actionArgs, vim) {

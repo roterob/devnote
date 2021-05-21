@@ -122,7 +122,7 @@ function mdDocument(md, parent) {
 
   function updateCurrentSections(md) {
     const filteredSections = Object.keys(filteredDocument).length;
-    if ( filteredSections == Object.keys(document).length) {
+    if (filteredSections == 0 || filteredSections == Object.keys(document).length) {
       buildDocument(md);
     } else {
       removeFilteredSections();

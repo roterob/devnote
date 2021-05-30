@@ -109,12 +109,20 @@ const APP = (function () {
     setEditorValue(mdDocument.filter());
   }
 
+  function reloadCommand() {
+    setEditorValue(editor.getValue());
+  }
+
   function filterCommand(cliArgs) {
     saveCurrent();
     const [tags, from] = getFilterTags(cliArgs);
     setEditorValue(mdDocument.filter(tags, from || state.from));
     setState("tags", tags || null);
     setState("from", from);
+  }
+
+  function emptyCommand() {
+    filterCommand([objectId()]);
   }
 
   function fromCommand(cliArgs = []) {
@@ -220,6 +228,8 @@ const APP = (function () {
     pwdCommand,
     cwdCommand,
     openCommand,
+    reloadCommand,
+    emptyCommand,
     echoCommand,
     filterCommand,
     fromCommand,

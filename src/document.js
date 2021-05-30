@@ -1,5 +1,11 @@
 import { getDateTime } from "./utils";
 
+const EMPTY_SECTION = {
+  id: 0,
+  tags: [],
+  md: ""
+};
+
 function mdDocument(md, parent) {
   let document, tagIndex, msCounter, filteredDocument;
   let me = null;
@@ -71,6 +77,7 @@ function mdDocument(md, parent) {
       }
     }
     addSection();
+    document[EMPTY_SECTION.id] = EMPTY_SECTION;
   }
 
   function applyFilters(tags, from) {
@@ -85,6 +92,9 @@ function mdDocument(md, parent) {
           Array.prototype.push.apply(sections, [...index]);
         }
       });
+      if (sections.length == 0) {
+        sections.push(EMPTY_SECTION.id);
+      }
     }
 
     sections.sort();
@@ -102,7 +112,7 @@ function mdDocument(md, parent) {
     const mdContent = [];
 
     sections.forEach((sectionId) => {
-      const section = document[sectionId];
+      const section = document[sectionId] || EMPTY_SECTION;
       filteredDocument[sectionId] = section;
       mdContent.push(section.md);
     });
@@ -126,7 +136,7 @@ function mdDocument(md, parent) {
       buildDocument(md);
     } else {
       removeFilteredSections();
-      const auxDoc = mdDocument(md, me);
+      mdDocument(md, me);
     }
   }
 

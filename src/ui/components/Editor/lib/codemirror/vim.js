@@ -930,6 +930,8 @@
     { name: "filter", shortName: "f" },
     { name: "from" },
     { name: "edit", shortName: "e" },
+    { name: "empty", shortName: "emp" },
+    { name: "reload", shortName: "r" },
     { name: "setlocal", shortName: "setl" },
     { name: "setglobal", shortName: "setg" },
     { name: "sort", shortName: "sor" },
@@ -6304,6 +6306,12 @@
             showError(cm, e);
           });
         }
+      },
+      reload: function(cm, params) {
+        APP.reloadCommand();
+      },
+      empty: function (cm, params) {
+        APP.emptyCommand();
       },
       filter: function (cm, params) {
         showConfirm(cm, APP.filterCommand(params.args));

@@ -115,8 +115,8 @@ const APP = (function () {
 
   function filterCommand(cliArgs) {
     saveCurrent();
-    const [tags, from] = getFilterTags(cliArgs);
-    setEditorValue(mdDocument.filter(tags, from || state.from));
+    const [tags, from, last] = getFilterTags(cliArgs);
+    setEditorValue(mdDocument.filter(tags, from || state.from, last));
     setState("tags", tags || null);
     setState("from", from);
   }

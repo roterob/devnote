@@ -80,7 +80,7 @@ function mdDocument(md, parent) {
     document[EMPTY_SECTION.id] = EMPTY_SECTION;
   }
 
-  function applyFilters(tags, from) {
+  function applyFilters(tags, from, last) {
     let sections = [];
 
     if (!tags || tags.length == 0) {
@@ -92,9 +92,6 @@ function mdDocument(md, parent) {
           Array.prototype.push.apply(sections, [...index]);
         }
       });
-      if (sections.length == 0) {
-        sections.push(EMPTY_SECTION.id);
-      }
     }
 
     sections.sort();
@@ -103,11 +100,20 @@ function mdDocument(md, parent) {
       sections = fromIndex >= 0 ? sections.slice(fromIndex) : [];
     }
 
+    if (last) {
+      const fromIndex = sections.length - last;
+      sections = fromIndex >= 0 ? sections.slice(fromIndex) : [];
+    }
+
+    if (sections.length == 0) {
+      sections.push(EMPTY_SECTION.id);
+    }
+
     return sections;
   }
 
-  function filter(tags, from) {
-    const sections = applyFilters(tags, from);
+  function filter(tags, from, last) {
+    const sections = applyFilters(tags, from, last);
     filteredDocument = {};
     const mdContent = [];
 

@@ -24,21 +24,40 @@ export function getHumanizedDateTime(line) {
   return res;
 }
 
+function getCliParam(cliArgs, from) {
+  const params = []
+  let i = from;
+  while(i<cliArgs.length && !cliArgs[i].startsWith("--")) {
+    params.push(cliArgs[i]);
+    i++;
+  }
+  return [params, i];
+}
+
 export function getFilterTags(cliArgs) {
   if (!cliArgs || cliArgs.length == 0) {
     return [];
   }
   const tags = [];
-  for (let i = 0; i < cliArgs.length; i++) {
+  let from = null;
+  let last = null;
+  for (let i = 0; i < cliArgs.length;) {
     const tag = cliArgs[i];
     if (tag == "--from") {
-      const dateArgs = cliArgs.slice(i + 1).join(" ");
-      return [tags, getDateTime(dateArgs) || getHumanizedDateTime(dateArgs)];
+      let dateParams = [];
+      [dateParams, i] = getCliParam(cliArgs, ++i);
+      const dateArgs = dateParams.join(" ");
+      from = getDateTime(dateArgs) || getHumanizedDateTime(dateArgs);
+    } else if (tag == "--last") {
+      let lastParams = [];
+      [lastParams, i] = getCliParam(cliArgs, ++i);
+      last = parseInt(lastParams.join(""), 10) || 1;
     } else {
       tags.push(tag);
+      i++;
     }
   }
-  return [tags];
+  return [tags, from, last];
 }
 
 export function objectId() {

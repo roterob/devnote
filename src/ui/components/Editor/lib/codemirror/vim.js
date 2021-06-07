@@ -6204,7 +6204,11 @@
           }
           return;
         }
-        exCommandDispatcher.map(mapArgs[0], mapArgs[1], ctx);
+        var rhl = mapArgs[1];
+        if (rhl.charAt(0) == ":") {
+          rhl = mapArgs.slice(1).join(" ");
+        }
+        exCommandDispatcher.map(mapArgs[0], rhl, ctx);
       },
       imap: function (cm, params) {
         this.map(cm, params, "insert");

@@ -6,8 +6,11 @@ const EMPTY_SECTION = {
   md: ""
 };
 
-function mdDocument(md, parent) {
-  let document, tagIndex, msCounter, filteredDocument;
+function mdDocument(md) {
+  let document = {},
+    tagIndex = {},
+    msCounter = 0,
+    filteredDocument = {};
   let me = null;
 
   function addTagIndex(tag, sectionId) {
@@ -16,12 +19,15 @@ function mdDocument(md, parent) {
     tagIndex[tag] = list;
   }
 
-  function buildDocument(md) {
-    document = parent ? parent.getDocument() : {};
-    tagIndex = parent ? parent.getTagIndex() : {};
-    msCounter = parent ? parent.getMsCounter() : 0; // used for generate section unique ids.
+  function reset() {
+    document = {};
+    tagIndex = {};
+    msCounter = 0;
     filteredDocument = {};
+  }
 
+  function buildDocument(md) {
+    const sectionsAdded = [];
     const TAG_RE = /#([\w-_0-9\/]*)\b/g;
     const DATE_RE = /#(\d{1,2})\/(\d{1,2})\/(\d{4})/;
     const lines = md.split(/\r?\n/);
@@ -41,9 +47,7 @@ function mdDocument(md, parent) {
         for (const tag of tags) {
           addTagIndex(tag, dateMS);
         }
-        if (parent) {
-          parent.setMsCounter(msCounter);
-        }
+        sectionsAdded.push(dateMS);
       }
     }
 
@@ -78,6 +82,7 @@ function mdDocument(md, parent) {
     }
     addSection();
     document[EMPTY_SECTION.id] = EMPTY_SECTION;
+    return sectionsAdded;
   }
 
   function applyFilters(tags, from, last) {
@@ -112,8 +117,7 @@ function mdDocument(md, parent) {
     return sections;
   }
 
-  function filter(tags, from, last) {
-    const sections = applyFilters(tags, from, last);
+  function buildFilteredDocument(sections) {
     filteredDocument = {};
     const mdContent = [];
 
@@ -124,6 +128,11 @@ function mdDocument(md, parent) {
     });
 
     return mdContent.join("\n");
+  }
+
+  function filter(tags, from, last) {
+    const sections = applyFilters(tags, from, last);
+    return buildFilteredDocument(sections);
   }
 
   function removeFilteredSections() {
@@ -138,11 +147,13 @@ function mdDocument(md, parent) {
 
   function updateCurrentSections(md) {
     const filteredSections = Object.keys(filteredDocument).length;
-    if (filteredSections == 0 || filteredSections == Object.keys(document).length) {
+    if (filteredSections == 0) {
+      reset();
       buildDocument(md);
     } else {
       removeFilteredSections();
-      mdDocument(md, me);
+      const sectionsAdded = buildDocument(md);
+      buildFilteredDocument(sectionsAdded);
     }
   }
 

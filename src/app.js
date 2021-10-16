@@ -3,6 +3,7 @@ import { promises as fs, existsSync, createWriteStream, mkdirSync } from "fs";
 import * as path from "path";
 
 import document from "./document";
+import autocomplete from "./autocomplete";
 import { FILE_PROTOCOL } from "./constants";
 import {
   getDateTime,
@@ -20,6 +21,7 @@ const APP = (function () {
   let store = null;
   let mdDocument = null;
   let currentChanged = false;
+  let currentAutocomplete = null;
 
   const editorChangeHandler = (cm, changeObj) => {
     currentChanged = true;
@@ -148,7 +150,6 @@ const APP = (function () {
     setState("lastFile", fileToSave);
     return `${fileToSave} saved!`;
   }
-  function drawCommand() {}
   function insertCommand() {}
   function tocCommand() {}
   function printCommand(tags) {}
@@ -221,6 +222,20 @@ const APP = (function () {
     store.setDrawMode({ app: APP, drawInfo });
   }
 
+  function autocompleteCommand(input, next) {
+    if (input) {
+      currentAutocomplete = currentAutocomplete || autocomplete(input, mdDocument);
+      if (next) {
+        currentAutocomplete.next();
+      } else {
+        currentAutocomplete.previous();
+      }
+    } else {
+      // reset
+      currentAutocomplete = null;
+    }
+  }
+
   return {
     init,
     uploadFile,
@@ -235,6 +250,7 @@ const APP = (function () {
     fromCommand,
     writeCommand,
     drawCommand,
+    autocompleteCommand,
     getDrawInfo,
   };
 })();

@@ -28,7 +28,7 @@ function mdDocument(md) {
 
   function buildDocument(md) {
     const sectionsAdded = [];
-    const TAG_RE = /#([\w-_0-9\/]*)\b/g;
+    const TAG_RE = /#([\w\-_0-9\/]*)\b/g;
     const DATE_RE = /#(\d{1,2})\/(\d{1,2})\/(\d{4})/;
     const lines = md.split(/\r?\n/);
     let blockLines = [];

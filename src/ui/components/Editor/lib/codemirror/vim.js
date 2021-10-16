@@ -2376,6 +2376,10 @@
           var keyName = CodeMirror.keyName(e),
             up,
             offset;
+          if (!["Shift", "Tab", "Shift-Tab"].includes(keyName)) {
+            // reset
+            APP.autocompleteCommand();
+          }
           if (
             keyName == "Esc" ||
             keyName == "Ctrl-C" ||
@@ -2402,6 +2406,9 @@
                 offset,
                 e.target.value.length
               );
+          } else if (keyName == "Tab" || keyName == "Shift-Tab") {
+            CodeMirror.e_stop(e);
+            APP.autocompleteCommand(e.target, keyName == "Tab");
           } else if (keyName == "Ctrl-U") {
             // Ctrl-U clears input.
             CodeMirror.e_stop(e);
@@ -6876,6 +6883,7 @@
         // Swallow all keys.
         CodeMirror.e_stop(e);
         var keyName = CodeMirror.keyName(e);
+        console.log(keyName);
         switch (keyName) {
           case "Y":
             replace();

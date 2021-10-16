@@ -458,6 +458,11 @@
       motionArgs: { forward: false, toJumplist: true },
     },
     {
+      keys: "gx",
+      type: "motion",
+      motion: "openExternalApp",
+    },
+    {
       keys: "gn",
       type: "motion",
       motion: "findAndSelectNextInclusive",
@@ -2725,6 +2730,9 @@
         prev = state.isReversed() ? !prev : prev;
         highlightSearchMatches(cm, query);
         return findNext(cm, prev /** prev */, query, motionArgs.repeat);
+      },
+      openExternalApp: function (cm) {
+        APP.openExtCommand(cm);
       },
       /**
        * Find and select the next occurrence of the search query. If the cursor is currently

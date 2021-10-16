@@ -1,4 +1,4 @@
-import { remote, ipcRenderer } from "electron";
+import { remote, ipcRenderer, shell } from "electron";
 import { promises as fs, existsSync, createWriteStream, mkdirSync } from "fs";
 import * as path from "path";
 
@@ -236,6 +236,13 @@ const APP = (function () {
     }
   }
 
+  function openExtCommand(cm) {
+    const line = getCmCurrentLine(cm);
+    if (/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/.test(line)) {
+      shell.openExternal(RegExp.$1);
+    }
+  }
+
   return {
     init,
     uploadFile,
@@ -251,6 +258,7 @@ const APP = (function () {
     writeCommand,
     drawCommand,
     autocompleteCommand,
+    openExtCommand,
     getDrawInfo,
   };
 })();

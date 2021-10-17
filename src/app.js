@@ -238,8 +238,15 @@ const APP = (function () {
 
   function openExtCommand(cm) {
     const line = getCmCurrentLine(cm);
-    if (/(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*))/.test(line)) {
+    if (
+      /(https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{1,256}\.[a-zA-Z0-9()]{1,6}\b([-a-zA-Z0-9()@:%_\+.~#?&//=]*?))\)?/.test(
+        line
+      )
+    ) {
       shell.openExternal(RegExp.$1);
+    } else if (/devnote.\/\/([^\?]+)/.test(line)) {
+      const filePath = path.join(state.pwd, "files", RegExp.$1);
+      shell.openExternal(filePath);
     }
   }
 

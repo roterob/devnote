@@ -388,16 +388,16 @@
       actionArgs: { after: false, isEdit: true, matchIndent: true },
     },
     {
-      keys: "]<character>",
+      keys: "]",
       type: "motion",
-      motion: "moveToSymbol",
-      motionArgs: { forward: true, toJumplist: true },
+      motion: "moveToPage",
+      motionArgs: { forward: true },
     },
     {
-      keys: "[<character>",
+      keys: "[",
       type: "motion",
-      motion: "moveToSymbol",
-      motionArgs: { forward: false, toJumplist: true },
+      motion: "moveToPage",
+      motionArgs: { forward: false },
     },
     { keys: "|", type: "motion", motion: "moveToColumn" },
     {
@@ -1987,6 +1987,7 @@
             case "yank":
               // The 0 register contains the text from the most recent yank.
               this.registers["0"] = new Register(text, linewise, blockwise);
+              APP.pasteToClipboardCommand(text);
               break;
             case "delete":
             case "change":
@@ -3062,6 +3063,9 @@
             motionArgs.selectedCharacter
           ) || head
         );
+      },
+      moveToPage: function (cm, head, motionArgs) {
+        APP.showPageCommand(motionArgs.forward);
       },
       moveToSymbol: function (cm, head, motionArgs) {
         var repeat = motionArgs.repeat;

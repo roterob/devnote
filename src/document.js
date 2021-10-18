@@ -130,9 +130,17 @@ function mdDocument(md) {
     return mdContent.join("\n");
   }
 
-  function filter(tags, from, last) {
+  function filter(tags, from, last, paginate) {
     const sections = applyFilters(tags, from, last);
-    return buildFilteredDocument(sections);
+    if (paginate) {
+      return sections;
+    } else {
+      return buildFilteredDocument(sections);
+    }
+  }
+
+  function filterBySectionId(sectionId) {
+    return buildFilteredDocument([sectionId]);
   }
 
   function removeFilteredSections() {
@@ -175,6 +183,7 @@ function mdDocument(md) {
     getMsCounter: () => msCounter,
     setMsCounter: (counter) => msCounter = counter,
     filter,
+    filterBySectionId,
     updateCurrentSections,
     toString,
   };

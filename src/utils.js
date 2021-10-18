@@ -41,6 +41,7 @@ export function getFilterTags(cliArgs) {
   const tags = [];
   let from = null;
   let last = null;
+  let paginate = false;
   for (let i = 0; i < cliArgs.length;) {
     const tag = cliArgs[i];
     if (tag == "--from") {
@@ -52,12 +53,15 @@ export function getFilterTags(cliArgs) {
       let lastParams = [];
       [lastParams, i] = getCliParam(cliArgs, ++i);
       last = parseInt(lastParams.join(""), 10) || 1;
+    } else if (tag == "--paginate") {
+      paginate = true;
+      i++;
     } else {
       tags.push(tag);
       i++;
     }
   }
-  return [tags, from, last];
+  return [tags, from, last, paginate];
 }
 
 export function objectId() {

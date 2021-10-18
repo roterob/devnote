@@ -1,4 +1,4 @@
-import { remote, ipcRenderer, shell } from "electron";
+import { remote, ipcRenderer, shell, clipboard } from "electron";
 import { promises as fs, existsSync, createWriteStream, mkdirSync } from "fs";
 import * as path from "path";
 
@@ -22,6 +22,8 @@ const APP = (function () {
   let mdDocument = null;
   let currentChanged = false;
   let currentAutocomplete = null;
+  let sections = [];
+  let currentSection = 0;
 
   const editorChangeHandler = (cm, changeObj) => {
     currentChanged = true;
@@ -117,10 +119,37 @@ const APP = (function () {
 
   function filterCommand(cliArgs) {
     saveCurrent();
-    const [tags, from, last] = getFilterTags(cliArgs);
-    setEditorValue(mdDocument.filter(tags, from || state.from, last));
+    sections = [];
+    currentSection = 0;
+    const [tags, from, last, paginate] = getFilterTags(cliArgs);
+    const res = mdDocument.filter(tags, from || state.from, last, paginate);
+    if (paginate) {
+      sections = res;
+      showPageCommand();
+    } else {
+      setEditorValue(res);
+    }
     setState("tags", tags || null);
     setState("from", from);
+  }
+
+  function showPageCommand(next) {
+    if (typeof next === "undefined") {
+      if (sections.length > 0) {
+        const value = mdDocument.filterBySectionId(sections[currentSection])
+        setEditorValue(value);
+      }
+    } else {
+      if (sections.length > 0) {
+        currentSection = next
+          ? ++currentSection % sections.length
+          : currentSection == 0
+          ? sections.length - 1
+          : currentSection - 1;
+        const value = mdDocument.filterBySectionId(sections[currentSection]);
+        setEditorValue(value);
+      }
+    }
   }
 
   function emptyCommand() {
@@ -250,6 +279,10 @@ const APP = (function () {
     }
   }
 
+  function pasteToClipboardCommand(text) {
+    clipboard.writeText(text);
+  }
+
   return {
     init,
     uploadFile,
@@ -266,6 +299,8 @@ const APP = (function () {
     drawCommand,
     autocompleteCommand,
     openExtCommand,
+    pasteToClipboardCommand,
+    showPageCommand,
     getDrawInfo,
   };
 })();

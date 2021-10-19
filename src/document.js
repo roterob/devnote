@@ -91,12 +91,8 @@ function mdDocument(md) {
     if (!tags || tags.length == 0) {
       sections = Object.keys(document);
     } else {
-      tags.forEach((tag) => {
-        const index = tagIndex[tag];
-        if (index) {
-          Array.prototype.push.apply(sections, [...index]);
-        }
-      });
+      const [first, ...rest] = tags.map((tag) => tagIndex[tag] || new Set());
+      sections = [...first].filter(e => rest.every(index => index.has(e)));
     }
 
     sections.sort();

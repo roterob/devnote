@@ -53,8 +53,11 @@ const APP = (function () {
   function saveCurrent() {
     if (currentChanged) {
       const md = editor.getValue();
-      mdDocument.updateCurrentSections(md);
+      const sectionsSaved = mdDocument.updateCurrentSections(md);
       currentChanged = false;
+      if (sections.length > 0 && sectionsSaved.length === 1) {
+        sections[currentSection] = sectionsSaved[0];
+      }
     }
   }
 
@@ -134,6 +137,7 @@ const APP = (function () {
   }
 
   function showPageCommand(next) {
+    saveCurrent();
     if (typeof next === "undefined") {
       if (sections.length > 0) {
         const value = mdDocument.filterBySectionId(sections[currentSection])

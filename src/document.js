@@ -154,10 +154,12 @@ function mdDocument(md) {
     if (filteredSections == 0) {
       reset();
       buildDocument(md);
+      return [];
     } else {
       removeFilteredSections();
       const sectionsAdded = buildDocument(md);
       buildFilteredDocument(sectionsAdded);
+      return sectionsAdded;
     }
   }
 

@@ -3065,7 +3065,7 @@
         );
       },
       moveToPage: function (cm, head, motionArgs) {
-        APP.showPageCommand(motionArgs.forward);
+        showConfirm(cm, APP.showPageCommand(motionArgs.forward));
       },
       moveToSymbol: function (cm, head, motionArgs) {
         var repeat = motionArgs.repeat;

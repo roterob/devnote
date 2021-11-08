@@ -154,6 +154,7 @@ const APP = (function () {
         setEditorValue(value);
       }
     }
+    return `(${currentSection + 1} of ${sections.length})`;
   }
 
   function emptyCommand() {

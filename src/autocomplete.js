@@ -14,6 +14,13 @@ function autocomplete(input, document) {
           tag.startsWith(termToAutocomplete)
         ),
     },
+    {
+      regex: /f(ilter)?\s+(.*?)--(?<term>[\w\-_0-9\/]*)$/,
+      getProposedValues: () =>
+        ["paginate", "from", "last"].filter((tag) =>
+          tag.startsWith(termToAutocomplete)
+        ),
+    },
   ];
 
   for (const mode of modes) {
